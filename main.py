@@ -1,39 +1,36 @@
 from fastapi import FastAPI, Request, Form
-from fastapi.responses import HTMLResponse, FileResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from sqlalchemy import insert, select
-from database import async_session, Email
+from database import async_session, Email, init_db
+from sqlalchemy import select
+from starlette.status import HTTP_302_FOUND
 
 app = FastAPI()
 
-# Static ve templates klasörlerini bağla
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
-# Ana sayfa - formla e-posta toplayan landing page
+@app.on_event("startup")
+async def on_startup():
+    await init_db()
+
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
-# Formdan e-posta alma
-@app.post("/subscribe", response_class=HTMLResponse)
-async def subscribe(request: Request, email: str = Form(...)):
+@app.post("/submit")
+async def submit_email(email: str = Form(...)):
     async with async_session() as session:
-        stmt = insert(Email).values(address=email)
-        await session.execute(stmt)
-        await session.commit()
-    return templates.TemplateResponse("success.html", {"request": request, "email": email})
+        async with session.begin():
+            existing_email = await session.scalar(select(Email).where(Email.address == email))
+            if not existing_email:
+                session.add(Email(address=email))
+    return RedirectResponse(url="/", status_code=HTTP_302_FOUND)
 
-# E-posta listesini görüntüleme (geliştirici testi için)
 @app.get("/emails")
 async def get_emails():
     async with async_session() as session:
         result = await session.execute(select(Email))
         emails = result.scalars().all()
         return {"emails": [e.address for e in emails]}
-
-# robots.txt'yi kök dizinden sun
-@app.get("/robots.txt", include_in_schema=False)
-async def robots():
-    return FileResponse("static/robots.txt", media_type="text/plain")
