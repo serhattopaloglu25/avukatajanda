@@ -1,21 +1,30 @@
-from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, Request, Form
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+import csv
 import os
 
 app = FastAPI()
 
-# Static dosyaları bağla
+# Klasör bağlantıları
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
+# Ana sayfa
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
-# Uvicorn sadece local çalıştırma için
-if __name__ == "__main__":
-    import uvicorn
-    port = int(os.environ.get("PORT", 10000))
-    uvicorn.run("avukatajanda.main:app", host="0.0.0.0", port=port, reload=True)
+# Formdan email alma
+@app.post("/submit", response_class=HTMLResponse)
+async def submit_email(request: Request, email: str = Form(...)):
+    # CSV dosyasına yaz
+    file_path = "emails.csv"
+    file_exists = os.path.isfile(file_path)
+    with open(file_path, mode="a", newline="") as file:
+        writer = csv.writer(file)
+        if not file_exists:
+            writer.writerow(["Email"])
+        writer.writerow([email])
+    return RedirectResponse("/", status_code=303)
