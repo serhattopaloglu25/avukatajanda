@@ -1,8 +1,8 @@
 from fastapi import FastAPI, Request, Form
-from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from sqlalchemy.future import select
+from sqlalchemy import insert, select
 from database import async_session, Email
 
 app = FastAPI()
@@ -11,24 +11,29 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
-# Ana sayfa - form gösterimi
+# Ana sayfa - formla e-posta toplayan landing page
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
-# Formdan gelen e-postayı kaydet
-@app.post("/subscribe", response_class=RedirectResponse)
+# Formdan e-posta alma
+@app.post("/subscribe", response_class=HTMLResponse)
 async def subscribe(request: Request, email: str = Form(...)):
     async with async_session() as session:
-        new_email = Email(address=email)
-        session.add(new_email)
+        stmt = insert(Email).values(address=email)
+        await session.execute(stmt)
         await session.commit()
-    return RedirectResponse("/", status_code=303)
+    return templates.TemplateResponse("success.html", {"request": request, "email": email})
 
-# Kayıtlı e-postaları göster
-@app.get("/emails", response_class=JSONResponse)
+# E-posta listesini görüntüleme (geliştirici testi için)
+@app.get("/emails")
 async def get_emails():
     async with async_session() as session:
         result = await session.execute(select(Email))
         emails = result.scalars().all()
-        return [{"id": e.id, "address": e.address} for e in emails]
+        return {"emails": [e.address for e in emails]}
+
+# robots.txt'yi kök dizinden sun
+@app.get("/robots.txt", include_in_schema=False)
+async def robots():
+    return FileResponse("static/robots.txt", media_type="text/plain")
