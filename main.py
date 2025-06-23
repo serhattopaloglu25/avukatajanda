@@ -5,13 +5,11 @@ from fastapi.templating import Jinja2Templates
 
 app = FastAPI()
 
-# Boş static klasör tanımlı mı?
+# Static ve templates klasörlerini bağla
 app.mount("/static", StaticFiles(directory="static"), name="static")
-
-# Template klasörünü tanımla
 templates = Jinja2Templates(directory="templates")
 
-# Anasayfa endpoint’i
+# Ana sayfa route'u
 @app.get("/", response_class=HTMLResponse)
-def read_root(request: Request):
-    return templates.TemplateResponse("home.html", {"request": request})
+async def read_root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
