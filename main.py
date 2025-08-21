@@ -1,3 +1,4 @@
+from claude_service import claude_service
 from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -489,6 +490,15 @@ if CASES_ENABLED:
                 detail="Duruşma bulunamadı"
             )
         return HearingResponse(**hearing)
+
+        @app.get("/claude-help")
+        async def claude_help(error: str = "Genel yardım"):
+            """Claude'dan yardım al"""
+            if claude_service.is_available:
+                analysis = await claude_service.analyze_error(error)
+                return {"status": "success", "claude_response": analysis}
+            else:
+                return {"status": "error", "message": "Claude kullanılamıyor"}
 
 if __name__ == "__main__":
     import uvicorn
