@@ -26,7 +26,7 @@ class ClaudeService:
         
         try:
             response = await self.client.messages.create(
-                model="claude-3-sonnet-20240229",
+                model="claude-3-5-sonnet-20240229",
                 max_tokens=500,
                 messages=[{
                     "role": "user",
