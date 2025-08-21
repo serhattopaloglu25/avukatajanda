@@ -64,8 +64,8 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Avukat Ajanda Sistemi",
-    description="Avukatlar için kapsamlı ajanda, müşteri ve dava yönetim sistemi",
-    version="1.0.0",
+    description="Avukatlar için kapsamlı ajanda, müşteri ve dava yönetim sistemi - Claude AI Destekli",
+    version="2.0.0",
     lifespan=lifespan
 )
 
@@ -74,15 +74,17 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, 
 @app.get("/")
 async def root():
     return {
-        "message": "Avukat Ajanda API",
-        "version": "1.0.0",
+        "message": "Avukat Ajanda API - Claude AI Destekli",
+        "version": "2.0.0",
         "auth_enabled": AUTH_ENABLED,
         "clients_enabled": CLIENTS_ENABLED,
         "appointments_enabled": APPOINTMENTS_ENABLED,
         "cases_enabled": CASES_ENABLED,
+        "claude_enabled": claude_service.is_available,
         "endpoints": {
             "docs": "/docs",
-            "health": "/health"
+            "health": "/health",
+            "claude_help": "/claude-help"
         }
     }
 
@@ -94,9 +96,20 @@ async def health():
             "auth": AUTH_ENABLED,
             "clients": CLIENTS_ENABLED,
             "appointments": APPOINTMENTS_ENABLED,
-            "cases": CASES_ENABLED
+            "cases": CASES_ENABLED,
+            "claude": claude_service.is_available
         }
     }
+
+# CLAUDE ENDPOINT
+@app.get("/claude-help")
+async def claude_help(error: str = "Genel yardım"):
+    """Claude'dan yardım al"""
+    if claude_service.is_available:
+        analysis = await claude_service.analyze_error(error)
+        return {"status": "success", "claude_response": analysis}
+    else:
+        return {"status": "error", "message": "Claude kullanılamıyor"}
 
 # AUTH ENDPOINTS
 if AUTH_ENABLED:
@@ -490,15 +503,6 @@ if CASES_ENABLED:
                 detail="Duruşma bulunamadı"
             )
         return HearingResponse(**hearing)
-
-        @app.get("/claude-help")
-        async def claude_help(error: str = "Genel yardım"):
-            """Claude'dan yardım al"""
-            if claude_service.is_available:
-                analysis = await claude_service.analyze_error(error)
-                return {"status": "success", "claude_response": analysis}
-            else:
-                return {"status": "error", "message": "Claude kullanılamıyor"}
 
 if __name__ == "__main__":
     import uvicorn
