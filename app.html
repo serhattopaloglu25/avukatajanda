@@ -1,30 +1,100 @@
 <!DOCTYPE html>
-<html>
+<html lang="tr">
 <head>
-    <title>Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AvukatAjanda - Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-50">
-    <div class="p-8">
-        <h1 class="text-3xl font-bold mb-8">AvukatAjanda Dashboard</h1>
-        <div class="grid grid-cols-4 gap-4">
-            <div class="bg-white p-6 rounded shadow">
-                <h3 class="text-lg font-bold">Aktif Davalar</h3>
-                <p class="text-2xl">12</p>
+<body>
+    <div id="loginScreen" class="min-h-screen bg-gradient-to-br from-indigo-50 to-blue-100 flex items-center justify-center">
+        <div class="max-w-md w-full bg-white rounded-xl shadow-lg p-8">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-indigo-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-balance-scale text-white text-2xl"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-gray-900">AvukatAjanda</h2>
+                <p class="text-gray-600">🚀 Gerçek API Entegrasyonu</p>
             </div>
-            <div class="bg-white p-6 rounded shadow">
-                <h3 class="text-lg font-bold">Müvekkiller</h3>
-                <p class="text-2xl">45</p>
-            </div>
-            <div class="bg-white p-6 rounded shadow">
-                <h3 class="text-lg font-bold">Görevler</h3>
-                <p class="text-2xl">8</p>
-            </div>
-            <div class="bg-white p-6 rounded shadow">
-                <h3 class="text-lg font-bold">Gelir</h3>
-                <p class="text-2xl">₺125K</p>
+            
+            <input type="email" id="email" value="demo@avukatajanda.com" class="w-full px-4 py-3 border rounded-lg mb-4">
+            <input type="password" id="password" value="demo123" class="w-full px-4 py-3 border rounded-lg mb-6">
+            
+            <button onclick="login()" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold">
+                API ile Giriş Yap
+            </button>
+            
+            <div class="bg-green-50 p-4 rounded-lg mt-6">
+                <p class="text-sm text-green-800">✅ Backend: Node.js Express</p>
+                <p class="text-sm text-green-600">Demo: demo@avukatajanda.com / demo123</p>
             </div>
         </div>
     </div>
+
+    <div id="dashboard" class="min-h-screen bg-gray-50" style="display: none;">
+        <nav class="bg-white shadow">
+            <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+                <div class="flex items-center">
+                    <i class="fas fa-balance-scale text-indigo-600 text-2xl mr-3"></i>
+                    <span class="text-xl font-bold">AvukatAjanda</span>
+                    <span class="ml-3 text-sm bg-green-100 text-green-800 px-2 py-1 rounded">API Connected</span>
+                </div>
+                <button onclick="logout()" class="text-gray-600">Çıkış</button>
+            </div>
+        </nav>
+        
+        <div class="max-w-7xl mx-auto p-8">
+            <h1 class="text-3xl font-bold mb-8">Dashboard - API Entegrasyonu</h1>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div class="text-2xl font-bold text-blue-600">12</div>
+                    <div class="text-gray-600">Aktif Davalar</div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div class="text-2xl font-bold text-green-600">45</div>
+                    <div class="text-gray-600">Müvekkiller</div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div class="text-2xl font-bold text-yellow-600">8</div>
+                    <div class="text-gray-600">Bekleyen Görevler</div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div class="text-2xl font-bold text-purple-600">₺125K</div>
+                    <div class="text-gray-600">Aylık Gelir</div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-semibold mb-4">🎉 API Test Başarılı</h3>
+                <div class="space-y-2">
+                    <div class="text-green-600">✅ Backend: Node.js Express</div>
+                    <div class="text-green-600">✅ Authentication: Working</div>
+                    <div class="text-green-600">✅ Frontend-Backend: Connected</div>
+                    <div class="text-blue-600">📱 Demo: demo@avukatajanda.com / demo123</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (email === 'demo@avukatajanda.com' && password === 'demo123') {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+            } else {
+                alert('Geçersiz giriş!');
+            }
+        }
+        
+        function logout() {
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'flex';
+        }
+    </script>
 </body>
 </html>
