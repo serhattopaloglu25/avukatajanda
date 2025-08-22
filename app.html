@@ -98,3 +98,22 @@
     </script>
 </body>
 </html>
+<script>
+const API_BASE = 'https://avukat-ajanda-api.onrender.com';
+
+async function apiCall(endpoint, options = {}) {
+    const response = await fetch(API_BASE + endpoint, {
+        headers: { 'Content-Type': 'application/json' },
+        ...options
+    });
+    return response.json();
+}
+
+async function loadDashboard() {
+    const stats = await apiCall('/api/dashboard/stats');
+    if (stats.success) {
+        // Stats kartlarını güncelle
+        console.log('Dashboard loaded:', stats.data);
+    }
+}
+</script>
