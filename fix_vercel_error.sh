@@ -1,3 +1,55 @@
+echo "🔧 Vercel 500 Error Fix"
+cat > index.html << 'HTML'
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AvukatAjanda - AI Destekli Hukuk Yazılımı</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="min-h-screen bg-gradient-to-br from-indigo-600 to-purple-600 text-white">
+        <header class="bg-white/10 backdrop-blur-sm">
+            <div class="max-w-7xl mx-auto px-4 py-4">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-balance-scale text-indigo-600 text-xl"></i>
+                        </div>
+                        <span class="text-xl font-bold">AvukatAjanda</span>
+                    </div>
+                    <a href="/app.html" class="bg-white text-indigo-600 px-6 py-2 rounded-lg font-semibold">Dashboard</a>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-4 py-20 text-center">
+            <h1 class="text-6xl font-bold mb-8">Hukuk Büronuzu<br><span class="text-yellow-300">Dijitalleştirin</span></h1>
+            <p class="text-xl mb-12 max-w-4xl mx-auto">AI destekli AvukatAjanda ile tüm süreçlerinizi otomatikleştirin.</p>
+            
+            <div class="space-x-6">
+                <a href="/app.html" class="bg-white text-indigo-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100">
+                    <i class="fas fa-rocket mr-2"></i>Dashboard'a Git
+                </a>
+                <button class="border-2 border-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-white hover:text-indigo-600">
+                    Demo İzle
+                </button>
+            </div>
+            
+            <div class="flex justify-center gap-8 mt-12 text-white/80">
+                <div><i class="fas fa-check text-green-300 mr-2"></i>Kredi kartı gerekmez</div>
+                <div><i class="fas fa-check text-green-300 mr-2"></i>14 gün ücretsiz</div>
+                <div><i class="fas fa-check text-green-300 mr-2"></i>Anında kurulum</div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
+HTML
+
+cat > app.html << 'APP'
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -136,3 +188,10 @@
     </script>
 </body>
 </html>
+APP
+
+git add .
+git commit -m "🔧 Fix Vercel 500 - Simple HTML/JS"
+git push origin main
+
+echo "✅ FIXED! Run: vercel --prod"
