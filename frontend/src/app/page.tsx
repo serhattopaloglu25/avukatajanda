@@ -1,3 +1,7 @@
+'use client';
+
+import Link from 'next/link';
+
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-white">
@@ -14,16 +18,16 @@ export default function HomePage() {
             <h2 className="text-lg font-medium mb-4">Demo Giriş</h2>
             
             <div className="space-y-3">
-              <button 
-                onClick={() => window.location.href = '/dashboard'}
-                className="w-full bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700"
+              <Link 
+                href="/dashboard"
+                className="block w-full bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700 text-center"
               >
                 Dashboard'a Git
-              </button>
+              </Link>
               
               <div className="text-xs text-gray-500">
                 <p>Demo: demo@avukatajanda.com / demo123</p>
-                <p>API: {process.env.NEXT_PUBLIC_API_BASE_URL}</p>
+                <p>Backend API: Aktif</p>
               </div>
             </div>
           </div>
