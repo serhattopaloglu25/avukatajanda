@@ -1,154 +1,90 @@
-export default function DashboardPage() {
+'use client';
+
+import { useState, useEffect } from 'react';
+
+export default function Dashboard() {
+  const [stats, setStats] = useState({
+    cases: 24,
+    clients: 67,
+    documents: 156,
+    revenue: 182500
+  });
+
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: '#f8fafc',
-      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
-    }}>
+    <div style={{minHeight: '100vh', background: '#f5f7fa', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'}}>
       {/* Header */}
-      <div style={{
-        background: 'white',
-        borderBottom: '1px solid #e2e8f0',
-        padding: '1rem 2rem'
-      }}>
-        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-          <div style={{display: 'flex', alignItems: 'center'}}>
-            <span style={{fontSize: '1.5rem', fontWeight: 'bold'}}>⚖️ AvukatAjanda</span>
-          </div>
-          <div>
-            <a href="/" style={{color: '#64748b', textDecoration: 'none'}}>← Ana Sayfa</a>
-          </div>
+      <header style={{background: 'white', borderBottom: '1px solid #e5e7eb', padding: '1rem 2rem'}}>
+        <div style={{maxWidth: '1280px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+          <h1 style={{fontSize: '1.5rem', fontWeight: 'bold', margin: 0}}>AvukatAjanda Dashboard</h1>
+          <nav style={{display: 'flex', gap: '2rem'}}>
+            <a href="/dashboard" style={{color: '#0ea5e9', textDecoration: 'none'}}>Dashboard</a>
+            <a href="/dashboard/cases" style={{color: '#64748b', textDecoration: 'none'}}>Davalar</a>
+            <a href="/dashboard/clients" style={{color: '#64748b', textDecoration: 'none'}}>Müvekkiller</a>
+            <a href="/dashboard/documents" style={{color: '#64748b', textDecoration: 'none'}}>Belgeler</a>
+            <a href="/" style={{color: '#64748b', textDecoration: 'none'}}>Çıkış</a>
+          </nav>
         </div>
-      </div>
+      </header>
 
-      {/* Main Content */}
-      <div style={{padding: '2rem'}}>
-        <h1 style={{fontSize: '2rem', fontWeight: 'bold', marginBottom: '2rem'}}>
-          Dashboard
-        </h1>
-
-        {/* Stats Cards */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-          gap: '1.5rem',
-          marginBottom: '2rem'
-        }}>
-          <div style={{
-            background: 'white',
-            padding: '1.5rem',
-            borderRadius: '8px',
-            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
-          }}>
-            <h3 style={{color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem'}}>TOPLAM DAVA</h3>
-            <p style={{fontSize: '2rem', fontWeight: 'bold', color: '#1e293b'}}>24</p>
+      {/* Stats Grid */}
+      <div style={{maxWidth: '1280px', margin: '2rem auto', padding: '0 2rem'}}>
+        <div style={{display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem', marginBottom: '2rem'}}>
+          <div style={{background: 'white', padding: '1.5rem', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)'}}>
+            <h3 style={{color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem'}}>Toplam Dava</h3>
+            <p style={{fontSize: '2rem', fontWeight: 'bold', margin: 0}}>{stats.cases}</p>
           </div>
-
-          <div style={{
-            background: 'white',
-            padding: '1.5rem',
-            borderRadius: '8px',
-            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
-          }}>
-            <h3 style={{color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem'}}>AKTİF MÜVEKKİL</h3>
-            <p style={{fontSize: '2rem', fontWeight: 'bold', color: '#1e293b'}}>67</p>
+          <div style={{background: 'white', padding: '1.5rem', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)'}}>
+            <h3 style={{color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem'}}>Aktif Müvekkil</h3>
+            <p style={{fontSize: '2rem', fontWeight: 'bold', margin: 0}}>{stats.clients}</p>
           </div>
-
-          <div style={{
-            background: 'white',
-            padding: '1.5rem',
-            borderRadius: '8px',
-            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
-          }}>
-            <h3 style={{color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem'}}>BELGELER</h3>
-            <p style={{fontSize: '2rem', fontWeight: 'bold', color: '#1e293b'}}>156</p>
+          <div style={{background: 'white', padding: '1.5rem', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)'}}>
+            <h3 style={{color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem'}}>Toplam Belge</h3>
+            <p style={{fontSize: '2rem', fontWeight: 'bold', margin: 0}}>{stats.documents}</p>
           </div>
-
-          <div style={{
-            background: 'white',
-            padding: '1.5rem',
-            borderRadius: '8px',
-            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
-          }}>
-            <h3 style={{color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem'}}>AYLIK GELİR</h3>
-            <p style={{fontSize: '2rem', fontWeight: 'bold', color: '#1e293b'}}>₺182,500</p>
+          <div style={{background: 'white', padding: '1.5rem', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)'}}>
+            <h3 style={{color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem'}}>Aylık Gelir</h3>
+            <p style={{fontSize: '2rem', fontWeight: 'bold', margin: 0}}>₺{stats.revenue.toLocaleString()}</p>
           </div>
         </div>
 
-        {/* Navigation Cards */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: '1.5rem'
-        }}>
-          <a href="/dashboard/cases" style={{textDecoration: 'none'}}>
-            <div style={{
-              background: 'white',
-              padding: '1.5rem',
-              borderRadius: '8px',
-              boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-              border: '1px solid transparent',
-              cursor: 'pointer',
-              transition: 'all 0.2s'
+        {/* Quick Actions */}
+        <div style={{background: 'white', padding: '2rem', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)'}}>
+          <h2 style={{fontSize: '1.25rem', fontWeight: '600', marginBottom: '1.5rem'}}>Hızlı İşlemler</h2>
+          <div style={{display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem'}}>
+            <a href="/dashboard/cases/new" style={{
+              padding: '1rem',
+              border: '1px solid #e5e7eb',
+              borderRadius: '6px',
+              textDecoration: 'none',
+              color: '#1f2937',
+              textAlign: 'center',
+              display: 'block'
             }}>
-              <div style={{display: 'flex', alignItems: 'center', marginBottom: '1rem'}}>
-                <span style={{fontSize: '1.5rem', marginRight: '0.75rem'}}>📁</span>
-                <h3 style={{fontSize: '1.25rem', fontWeight: '600', color: '#1e293b'}}>Dava Yönetimi</h3>
-              </div>
-              <p style={{color: '#64748b', fontSize: '0.875rem'}}>
-                Tüm davalarınızı görüntüleyin ve yönetin
-              </p>
-            </div>
-          </a>
-
-          <a href="/dashboard/clients" style={{textDecoration: 'none'}}>
-            <div style={{
-              background: 'white',
-              padding: '1.5rem',
-              borderRadius: '8px',
-              boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-              cursor: 'pointer'
+              ➕ Yeni Dava
+            </a>
+            <a href="/dashboard/clients/new" style={{
+              padding: '1rem',
+              border: '1px solid #e5e7eb',
+              borderRadius: '6px',
+              textDecoration: 'none',
+              color: '#1f2937',
+              textAlign: 'center',
+              display: 'block'
             }}>
-              <div style={{display: 'flex', alignItems: 'center', marginBottom: '1rem'}}>
-                <span style={{fontSize: '1.5rem', marginRight: '0.75rem'}}>👥</span>
-                <h3 style={{fontSize: '1.25rem', fontWeight: '600', color: '#1e293b'}}>Müvekkil Yönetimi</h3>
-              </div>
-              <p style={{color: '#64748b', fontSize: '0.875rem'}}>
-                Müvekkil bilgileri ve iletişim
-              </p>
-            </div>
-          </a>
-
-          <a href="/dashboard/billing" style={{textDecoration: 'none'}}>
-            <div style={{
-              background: 'white',
-              padding: '1.5rem',
-              borderRadius: '8px',
-              boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-              cursor: 'pointer'
+              👤 Yeni Müvekkil
+            </a>
+            <a href="/dashboard/documents/upload" style={{
+              padding: '1rem',
+              border: '1px solid #e5e7eb',
+              borderRadius: '6px',
+              textDecoration: 'none',
+              color: '#1f2937',
+              textAlign: 'center',
+              display: 'block'
             }}>
-              <div style={{display: 'flex', alignItems: 'center', marginBottom: '1rem'}}>
-                <span style={{fontSize: '1.5rem', marginRight: '0.75rem'}}>💳</span>
-                <h3 style={{fontSize: '1.25rem', fontWeight: '600', color: '#1e293b'}}>SaaS Billing</h3>
-              </div>
-              <p style={{color: '#64748b', fontSize: '0.875rem'}}>
-                Plan yönetimi ve ödemeler
-              </p>
-            </div>
-          </a>
-        </div>
-
-        {/* Status */}
-        <div style={{
-          marginTop: '2rem',
-          padding: '1rem',
-          background: '#dcfce7',
-          borderRadius: '8px',
-          textAlign: 'center'
-        }}>
-          <p style={{color: '#166534', fontSize: '0.875rem', fontWeight: '500'}}>
-            ✅ Backend API Aktif | ✅ Multi-tenant SaaS | ✅ UYAP Integration Ready
-          </p>
+              📄 Belge Yükle
+            </a>
+          </div>
         </div>
       </div>
     </div>
