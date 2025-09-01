@@ -23,7 +23,7 @@ export default function HomePage() {
           </div>
           <div style={{display: 'flex', gap: '1rem', alignItems: 'center'}}>
             <a href="/login" style={{color: '#475569', textDecoration: 'none'}}>Giriş Yap</a>
-            <a href="/dashboard" style={{background: '#0ea5e9', color: 'white', padding: '10px 20px', borderRadius: '6px', textDecoration: 'none'}}>Ücretsiz Dene</a>
+            <a href="/login" style={{background: '#0ea5e9', color: 'white', padding: '10px 20px', borderRadius: '6px', textDecoration: 'none'}}>Ücretsiz Dene</a>
           </div>
         </div>
       </nav>
@@ -38,7 +38,7 @@ export default function HomePage() {
             Dava takibi, müvekkil yönetimi, belge organizasyonu ve UYAP entegrasyonu ile büronuzu dijitalleştirin
           </p>
           <div style={{display: 'flex', gap: '1rem', justifyContent: 'center', marginBottom: '4rem'}}>
-            <a href="/dashboard" style={{background: '#0ea5e9', color: 'white', padding: '14px 32px', borderRadius: '8px', textDecoration: 'none', fontSize: '1.125rem'}}>
+            <a href="/login" style={{background: '#0ea5e9', color: 'white', padding: '14px 32px', borderRadius: '8px', textDecoration: 'none', fontSize: '1.125rem'}}>
               14 Gün Ücretsiz Dene
             </a>
             <a href="#contact" style={{border: '2px solid #e5e7eb', padding: '14px 32px', borderRadius: '8px', textDecoration: 'none', color: '#475569'}}>
@@ -48,7 +48,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Features Grid */}
+      {/* Features Grid - aynı kalacak */}
       <section style={{padding: '5rem 2rem'}}>
         <div style={{maxWidth: '1280px', margin: '0 auto'}}>
           <h2 style={{fontSize: '2.5rem', fontWeight: 'bold', textAlign: 'center', marginBottom: '3rem'}}>
@@ -98,7 +98,7 @@ export default function HomePage() {
           <p style={{fontSize: '1.125rem', marginBottom: '2rem', opacity: 0.9}}>
             14 gün ücretsiz deneme sürümü ile başlayın
           </p>
-          <a href="/register" style={{
+          <a href="/login" style={{
             background: 'white',
             color: '#0ea5e9',
             padding: '14px 32px',
