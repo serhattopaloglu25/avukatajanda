@@ -12,10 +12,16 @@ export default function Dashboard() {
 
   return (
     <div style={{minHeight: '100vh', background: '#f5f7fa', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'}}>
-      {/* Header */}
+      {/* Header with Logo */}
       <header style={{background: 'white', borderBottom: '1px solid #e5e7eb', padding: '1rem 2rem'}}>
         <div style={{maxWidth: '1280px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-          <h1 style={{fontSize: '1.5rem', fontWeight: 'bold', margin: 0}}>AvukatAjanda Dashboard</h1>
+          <a href="/" style={{display: 'flex', alignItems: 'center', textDecoration: 'none'}}>
+            <img 
+              src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 50'%3E%3Crect x='5' y='10' width='30' height='25' rx='2' fill='%23203a4a'/%3E%3Crect x='15' y='5' width='25' height='20' rx='2' fill='%23ffc107' opacity='0.8'/%3E%3Ctext x='45' y='25' font-family='Arial' font-size='10' fill='white'%3EAJANDA%3C/text%3E%3Ctext x='45' y='35' font-family='Arial' font-size='18' font-weight='bold' fill='%23203a4a'%3EAVUKATAJANDA%3C/text%3E%3C/svg%3E" 
+              alt="AvukatAjanda" 
+              style={{height: '40px'}}
+            />
+          </a>
           <nav style={{display: 'flex', gap: '2rem'}}>
             <a href="/dashboard" style={{color: '#0ea5e9', textDecoration: 'none'}}>Dashboard</a>
             <a href="/dashboard/cases" style={{color: '#64748b', textDecoration: 'none'}}>Davalar</a>
@@ -28,6 +34,8 @@ export default function Dashboard() {
 
       {/* Stats Grid */}
       <div style={{maxWidth: '1280px', margin: '2rem auto', padding: '0 2rem'}}>
+        <h1 style={{fontSize: '2rem', fontWeight: 'bold', marginBottom: '2rem'}}>Dashboard</h1>
+        
         <div style={{display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem', marginBottom: '2rem'}}>
           <div style={{background: 'white', padding: '1.5rem', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)'}}>
             <h3 style={{color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem'}}>Toplam Dava</h3>

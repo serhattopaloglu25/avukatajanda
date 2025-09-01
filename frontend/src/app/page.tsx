@@ -3,11 +3,18 @@
 export default function HomePage() {
   return (
     <div style={{fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', minHeight: '100vh', background: 'white'}}>
-      {/* Navigation */}
+      {/* Navigation with Logo */}
       <nav style={{background: 'white', borderBottom: '1px solid #e5e7eb', position: 'sticky', top: 0, zIndex: 100}}>
         <div style={{maxWidth: '1280px', margin: '0 auto', padding: '0 2rem', height: '72px', display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
           <div style={{display: 'flex', alignItems: 'center', gap: '3rem'}}>
-            <div style={{fontSize: '24px', fontWeight: 'bold', color: '#0f172a'}}>AvukatAjanda</div>
+            {/* Logo */}
+            <a href="/" style={{display: 'flex', alignItems: 'center', textDecoration: 'none'}}>
+              <img 
+                src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 50'%3E%3Crect x='5' y='10' width='30' height='25' rx='2' fill='%23203a4a'/%3E%3Crect x='15' y='5' width='25' height='20' rx='2' fill='%23ffc107' opacity='0.8'/%3E%3Ctext x='45' y='25' font-family='Arial' font-size='10' fill='white'%3EAJANDA%3C/text%3E%3Ctext x='45' y='35' font-family='Arial' font-size='18' font-weight='bold' fill='%23203a4a'%3EAVUKATAJANDA%3C/text%3E%3C/svg%3E" 
+                alt="AvukatAjanda" 
+                style={{height: '45px'}}
+              />
+            </a>
             <div style={{display: 'flex', gap: '2rem'}}>
               <a href="#features" style={{color: '#475569', textDecoration: 'none'}}>Özellikler</a>
               <a href="#pricing" style={{color: '#475569', textDecoration: 'none'}}>Fiyatlandırma</a>
@@ -34,7 +41,7 @@ export default function HomePage() {
             <a href="/dashboard" style={{background: '#0ea5e9', color: 'white', padding: '14px 32px', borderRadius: '8px', textDecoration: 'none', fontSize: '1.125rem'}}>
               14 Gün Ücretsiz Dene
             </a>
-            <a href="/contact" style={{border: '2px solid #e5e7eb', padding: '14px 32px', borderRadius: '8px', textDecoration: 'none', color: '#475569'}}>
+            <a href="#contact" style={{border: '2px solid #e5e7eb', padding: '14px 32px', borderRadius: '8px', textDecoration: 'none', color: '#475569'}}>
               İletişime Geç
             </a>
           </div>
