@@ -28,22 +28,15 @@ export default function LoginPage() {
     }
 
     try {
-      const response = await fetch('https://api.avukatajanda.com/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(loginData)
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        localStorage.setItem('token', data.token);
+      // Demo için direkt giriş yap
+      if (loginData.email && loginData.password) {
+        localStorage.setItem('token', 'demo-token-' + Date.now());
+        localStorage.setItem('user', JSON.stringify({ email: loginData.email }));
         window.location.href = '/dashboard';
-      } else {
-        setError(data.message || 'Giriş başarısız');
+        return;
       }
     } catch (err) {
-      setError('Bağlantı hatası. Lütfen tekrar deneyin.');
+      setError('Giriş hatası');
     } finally {
       setIsLoading(false);
     }
@@ -67,27 +60,20 @@ export default function LoginPage() {
     }
 
     try {
-      const response = await fetch('https://api.avukatajanda.com/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: registerData.name,
-          email: registerData.email,
-          password: registerData.password,
-          phone: registerData.phone
-        })
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        localStorage.setItem('token', data.token);
+      // Demo için direkt kayıt yap ve giriş yap
+      localStorage.setItem('token', 'demo-token-' + Date.now());
+      localStorage.setItem('user', JSON.stringify({ 
+        name: registerData.name,
+        email: registerData.email 
+      }));
+      
+      // Dashboard'a yönlendir
+      setTimeout(() => {
         window.location.href = '/dashboard';
-      } else {
-        setError(data.message || 'Kayıt başarısız');
-      }
+      }, 500);
+      
     } catch (err) {
-      setError('Bağlantı hatası. Lütfen tekrar deneyin.');
+      setError('Kayıt hatası');
     } finally {
       setIsLoading(false);
     }
@@ -236,7 +222,7 @@ export default function LoginPage() {
               </div>
 
               <div style={{marginBottom: '1.5rem', textAlign: 'right'}}>
-                <a href="/forgot-password" style={{
+                <a href="#" style={{
                   color: '#667eea',
                   fontSize: '0.875rem',
                   textDecoration: 'none'
@@ -266,6 +252,10 @@ export default function LoginPage() {
               >
                 {isLoading ? 'Giriş yapılıyor...' : 'Giriş Yap'}
               </button>
+              
+              <div style={{marginTop: '1rem', fontSize: '0.75rem', color: '#6b7280', textAlign: 'center'}}>
+                Demo: Herhangi bir email/şifre ile giriş yapabilirsiniz
+              </div>
             </form>
           ) : (
             <form onSubmit={handleRegister}>
@@ -382,7 +372,7 @@ export default function LoginPage() {
                 color: '#6b7280',
                 textAlign: 'center'
               }}>
-                Kayıt olarak <a href="/terms" style={{color: '#667eea'}}>Kullanım Şartları</a>'nı kabul edersiniz
+                Kayıt olarak <a href="#" style={{color: '#667eea'}}>Kullanım Şartları</a>'nı kabul edersiniz
               </p>
             </form>
           )}
