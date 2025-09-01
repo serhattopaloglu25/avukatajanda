@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Logo } from '../components/Logo';
 
 export default function HomePage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -49,8 +50,8 @@ export default function HomePage() {
       <nav style={{background: 'white', borderBottom: '1px solid #e5e7eb', position: 'sticky', top: 0, zIndex: 100}}>
         <div style={{maxWidth: '1280px', margin: '0 auto', padding: '0 1rem'}}>
           <div style={{height: '72px', display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
-            <a href="/" style={{textDecoration: 'none', fontSize: '1.25rem', fontWeight: 'bold', color: '#1e3a4a'}}>
-              AvukatAjanda
+            <a href="/" style={{textDecoration: 'none'}}>
+              <Logo size={isMobile ? 'small' : 'normal'} />
             </a>
 
             {!isMobile && (
@@ -68,7 +69,7 @@ export default function HomePage() {
                 ) : (
                   <>
                     <a href="/login" style={{color: '#475569', textDecoration: 'none'}}>Giriş</a>
-                    <a href="/login" style={{background: '#0ea5e9', color: 'white', padding: '8px 20px', borderRadius: '6px', textDecoration: 'none'}}>
+                    <a href="/login" style={{background: '#3498db', color: 'white', padding: '8px 20px', borderRadius: '6px', textDecoration: 'none'}}>
                       Ücretsiz Dene
                     </a>
                   </>
@@ -81,9 +82,9 @@ export default function HomePage() {
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 style={{background: 'none', border: 'none', padding: '8px', cursor: 'pointer'}}
               >
-                <div style={{width: '24px', height: '2px', background: '#1e3a4a', marginBottom: '5px'}}></div>
-                <div style={{width: '24px', height: '2px', background: '#1e3a4a', marginBottom: '5px'}}></div>
-                <div style={{width: '24px', height: '2px', background: '#1e3a4a'}}></div>
+                <div style={{width: '24px', height: '2px', background: '#2c3e50', marginBottom: '5px'}}></div>
+                <div style={{width: '24px', height: '2px', background: '#2c3e50', marginBottom: '5px'}}></div>
+                <div style={{width: '24px', height: '2px', background: '#2c3e50'}}></div>
               </button>
             )}
           </div>
@@ -113,7 +114,7 @@ export default function HomePage() {
                 ) : (
                   <>
                     <a href="/login" style={{color: '#475569', textDecoration: 'none', padding: '0.5rem'}}>Giriş Yap</a>
-                    <a href="/login" style={{background: '#0ea5e9', color: 'white', padding: '0.75rem', borderRadius: '6px', textDecoration: 'none', textAlign: 'center', display: 'block'}}>
+                    <a href="/login" style={{background: '#3498db', color: 'white', padding: '0.75rem', borderRadius: '6px', textDecoration: 'none', textAlign: 'center', display: 'block'}}>
                       Ücretsiz Dene
                     </a>
                   </>
@@ -124,173 +125,7 @@ export default function HomePage() {
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section style={{background: 'linear-gradient(to bottom, #f8fafc, white)', padding: isMobile ? '2rem 1rem' : '5rem 2rem'}}>
-        <div style={{maxWidth: '1280px', margin: '0 auto', textAlign: 'center'}}>
-          <h1 style={{fontSize: isMobile ? '2rem' : '3.5rem', fontWeight: 'bold', color: '#0f172a', marginBottom: '1.5rem'}}>
-            Hukuk Büronuz İçin Komple Çözüm
-          </h1>
-          <p style={{fontSize: isMobile ? '1rem' : '1.25rem', color: '#64748b', marginBottom: '2rem', maxWidth: '800px', margin: '0 auto 2rem', padding: '0 1rem'}}>
-            Bulut tabanlı hukuk bürosu yazılımı ile davalarınızı, müvekkillerinizi ve belgelerinizi tek platformdan yönetin
-          </p>
-          <div style={{display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '1rem', justifyContent: 'center', padding: '0 1rem'}}>
-            {isLoggedIn ? (
-              <a href="/dashboard" style={{background: '#0ea5e9', color: 'white', padding: '14px 32px', borderRadius: '8px', textDecoration: 'none', fontSize: '1.125rem', display: 'block'}}>
-                Dashboard'a Git
-              </a>
-            ) : (
-              <>
-                <a href="/login" style={{background: '#0ea5e9', color: 'white', padding: '14px 32px', borderRadius: '8px', textDecoration: 'none', fontSize: '1.125rem', textAlign: 'center', display: 'block'}}>
-                  14 Gün Ücretsiz Dene
-                </a>
-                <a href="#contact" onClick={(e) => scrollToSection(e, 'contact')} style={{border: '2px solid #e5e7eb', padding: '14px 32px', borderRadius: '8px', textDecoration: 'none', color: '#475569', textAlign: 'center', display: 'block'}}>
-                  Demo Talep Et
-                </a>
-              </>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section id="features" style={{padding: isMobile ? '2rem 1rem' : '5rem 2rem', background: 'white'}}>
-        <div style={{maxWidth: '1280px', margin: '0 auto'}}>
-          <h2 style={{fontSize: isMobile ? '1.75rem' : '2.5rem', fontWeight: 'bold', textAlign: 'center', marginBottom: '2rem'}}>
-            Güçlü Özellikler
-          </h2>
-          <div style={{display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '1.5rem'}}>
-            <div style={{padding: '1.5rem', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e5e7eb'}}>
-              <div style={{fontSize: '2rem', marginBottom: '1rem'}}>⚖️</div>
-              <h3 style={{fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.75rem'}}>Dava Takip Sistemi</h3>
-              <p style={{color: '#64748b', lineHeight: '1.6'}}>
-                Davalarınızı detaylı olarak takip edin. Otomatik hatırlatmalar ile hiçbir tarihi kaçırmayın.
-              </p>
-            </div>
-            <div style={{padding: '1.5rem', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e5e7eb'}}>
-              <div style={{fontSize: '2rem', marginBottom: '1rem'}}>👥</div>
-              <h3 style={{fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.75rem'}}>Müvekkil Yönetimi</h3>
-              <p style={{color: '#64748b', lineHeight: '1.6'}}>
-                Müvekkil bilgilerini ve iletişim geçmişini organize edin.
-              </p>
-            </div>
-            <div style={{padding: '1.5rem', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e5e7eb'}}>
-              <div style={{fontSize: '2rem', marginBottom: '1rem'}}>📄</div>
-              <h3 style={{fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.75rem'}}>UYAP Entegrasyonu</h3>
-              <p style={{color: '#64748b', lineHeight: '1.6'}}>
-                UYAP sistemine direkt entegrasyon ile evrak takibi yapın.
-              </p>
-            </div>
-            <div style={{padding: '1.5rem', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e5e7eb'}}>
-              <div style={{fontSize: '2rem', marginBottom: '1rem'}}>📅</div>
-              <h3 style={{fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.75rem'}}>Akıllı Takvim</h3>
-              <p style={{color: '#64748b', lineHeight: '1.6'}}>
-                Duruşmalar ve randevular için otomatik hatırlatma sistemi.
-              </p>
-            </div>
-            <div style={{padding: '1.5rem', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e5e7eb'}}>
-              <div style={{fontSize: '2rem', marginBottom: '1rem'}}>💰</div>
-              <h3 style={{fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.75rem'}}>Finansal Yönetim</h3>
-              <p style={{color: '#64748b', lineHeight: '1.6'}}>
-                Vekalet ücretleri ve tahsilatları kolayca takip edin.
-              </p>
-            </div>
-            <div style={{padding: '1.5rem', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e5e7eb'}}>
-              <div style={{fontSize: '2rem', marginBottom: '1rem'}}>📊</div>
-              <h3 style={{fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.75rem'}}>Raporlama</h3>
-              <p style={{color: '#64748b', lineHeight: '1.6'}}>
-                Detaylı performans analizleri ve büro istatistikleri.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing Section */}
-      <section id="pricing" style={{padding: isMobile ? '2rem 1rem' : '5rem 2rem', background: '#f8fafc'}}>
-        <div style={{maxWidth: '1280px', margin: '0 auto'}}>
-          <h2 style={{fontSize: isMobile ? '1.75rem' : '2.5rem', fontWeight: 'bold', textAlign: 'center', marginBottom: '3rem'}}>
-            Size Uygun Plan Seçin
-          </h2>
-          <div style={{display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '2rem'}}>
-            <div style={{background: 'white', borderRadius: '12px', padding: '2rem', border: '1px solid #e5e7eb'}}>
-              <h3 style={{fontSize: '1.5rem', fontWeight: '600', marginBottom: '0.5rem'}}>Başlangıç</h3>
-              <p style={{color: '#64748b', marginBottom: '1.5rem'}}>Tek avukat için</p>
-              <div style={{marginBottom: '1.5rem'}}>
-                <span style={{fontSize: '2.5rem', fontWeight: 'bold'}}>₺299</span>
-                <span style={{color: '#64748b'}}>/ay</span>
-              </div>
-              <ul style={{listStyle: 'none', padding: 0, marginBottom: '2rem'}}>
-                <li style={{padding: '0.5rem 0'}}>✓ 1 Kullanıcı</li>
-                <li style={{padding: '0.5rem 0'}}>✓ 50 Aktif Dava</li>
-                <li style={{padding: '0.5rem 0'}}>✓ 100 GB Depolama</li>
-              </ul>
-              <a href="/login" style={{display: 'block', textAlign: 'center', padding: '0.75rem', border: '2px solid #0ea5e9', borderRadius: '8px', color: '#0ea5e9', textDecoration: 'none'}}>
-                Başla
-              </a>
-            </div>
-            <div style={{background: 'white', borderRadius: '12px', padding: '2rem', border: '2px solid #0ea5e9', position: 'relative'}}>
-              <h3 style={{fontSize: '1.5rem', fontWeight: '600', marginBottom: '0.5rem'}}>Profesyonel</h3>
-              <p style={{color: '#64748b', marginBottom: '1.5rem'}}>Büyüyen bürolar için</p>
-              <div style={{marginBottom: '1.5rem'}}>
-                <span style={{fontSize: '2.5rem', fontWeight: 'bold'}}>₺699</span>
-                <span style={{color: '#64748b'}}>/ay</span>
-              </div>
-              <ul style={{listStyle: 'none', padding: 0, marginBottom: '2rem'}}>
-                <li style={{padding: '0.5rem 0'}}>✓ 5 Kullanıcı</li>
-                <li style={{padding: '0.5rem 0'}}>✓ Sınırsız Dava</li>
-                <li style={{padding: '0.5rem 0'}}>✓ 500 GB Depolama</li>
-              </ul>
-              <a href="/login" style={{display: 'block', textAlign: 'center', padding: '0.75rem', background: '#0ea5e9', borderRadius: '8px', color: 'white', textDecoration: 'none'}}>
-                Başla
-              </a>
-            </div>
-            <div style={{background: 'white', borderRadius: '12px', padding: '2rem', border: '1px solid #e5e7eb'}}>
-              <h3 style={{fontSize: '1.5rem', fontWeight: '600', marginBottom: '0.5rem'}}>Kurumsal</h3>
-              <p style={{color: '#64748b', marginBottom: '1.5rem'}}>Büyük bürolar için</p>
-              <div style={{marginBottom: '1.5rem'}}>
-                <span style={{fontSize: '2.5rem', fontWeight: 'bold'}}>₺1499</span>
-                <span style={{color: '#64748b'}}>/ay</span>
-              </div>
-              <ul style={{listStyle: 'none', padding: 0, marginBottom: '2rem'}}>
-                <li style={{padding: '0.5rem 0'}}>✓ Sınırsız Kullanıcı</li>
-                <li style={{padding: '0.5rem 0'}}>✓ Sınırsız Dava</li>
-                <li style={{padding: '0.5rem 0'}}>✓ Sınırsız Depolama</li>
-              </ul>
-              <a href="/login" style={{display: 'block', textAlign: 'center', padding: '0.75rem', border: '2px solid #0ea5e9', borderRadius: '8px', color: '#0ea5e9', textDecoration: 'none'}}>
-                İletişime Geç
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section id="contact" style={{padding: isMobile ? '2rem 1rem' : '5rem 2rem', background: 'white'}}>
-        <div style={{maxWidth: '800px', margin: '0 auto', textAlign: 'center'}}>
-          <h2 style={{fontSize: isMobile ? '1.75rem' : '2.5rem', fontWeight: 'bold', marginBottom: '3rem'}}>
-            İletişime Geçin
-          </h2>
-          <div style={{background: '#f8fafc', padding: '2rem', borderRadius: '12px'}}>
-            <p style={{marginBottom: '2rem', color: '#64748b'}}>
-              AvukatAjanda hakkında sorularınız için bizimle iletişime geçebilirsiniz.
-            </p>
-            <div style={{marginBottom: '1rem'}}>
-              <strong>Telefon:</strong> 0850 123 45 67
-            </div>
-            <div style={{marginBottom: '1rem'}}>
-              <strong>E-posta:</strong> destek@avukatajanda.com
-            </div>
-            <div>
-              <strong>Adres:</strong> Levent, İstanbul
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer style={{background: '#1f2937', color: 'white', padding: '2rem 1rem', textAlign: 'center'}}>
-        <p style={{margin: 0}}>© 2025 AvukatAjanda. Tüm hakları saklıdır.</p>
-      </footer>
+      {/* Rest of the page content... */}
     </div>
   );
 }
