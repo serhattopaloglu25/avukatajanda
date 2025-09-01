@@ -1,1 +1,104 @@
-[Buraya kod gelecek]
+'use client';
+
+export default function HomePage() {
+  return (
+    <div style={{fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', minHeight: '100vh', background: 'white'}}>
+      {/* Navigation */}
+      <nav style={{background: 'white', borderBottom: '1px solid #e5e7eb', position: 'sticky', top: 0, zIndex: 100}}>
+        <div style={{maxWidth: '1280px', margin: '0 auto', padding: '0 2rem', height: '72px', display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+          <div style={{display: 'flex', alignItems: 'center', gap: '3rem'}}>
+            <div style={{fontSize: '24px', fontWeight: 'bold', color: '#0f172a'}}>AvukatAjanda</div>
+            <div style={{display: 'flex', gap: '2rem'}}>
+              <a href="#features" style={{color: '#475569', textDecoration: 'none'}}>Özellikler</a>
+              <a href="#pricing" style={{color: '#475569', textDecoration: 'none'}}>Fiyatlandırma</a>
+              <a href="#demo" style={{color: '#475569', textDecoration: 'none'}}>Demo</a>
+            </div>
+          </div>
+          <div style={{display: 'flex', gap: '1rem', alignItems: 'center'}}>
+            <a href="/login" style={{color: '#475569', textDecoration: 'none'}}>Giriş Yap</a>
+            <a href="/dashboard" style={{background: '#0ea5e9', color: 'white', padding: '10px 20px', borderRadius: '6px', textDecoration: 'none'}}>Ücretsiz Dene</a>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <section style={{background: 'linear-gradient(to bottom, #f8fafc, white)', padding: '5rem 2rem'}}>
+        <div style={{maxWidth: '1280px', margin: '0 auto', textAlign: 'center'}}>
+          <h1 style={{fontSize: '3.5rem', fontWeight: 'bold', color: '#0f172a', marginBottom: '1.5rem'}}>
+            Hukuk Büronuz İçin Komple Çözüm
+          </h1>
+          <p style={{fontSize: '1.25rem', color: '#64748b', marginBottom: '3rem', maxWidth: '800px', margin: '0 auto 3rem'}}>
+            Dava takibi, müvekkil yönetimi, belge organizasyonu ve UYAP entegrasyonu ile büronuzu dijitalleştirin
+          </p>
+          <div style={{display: 'flex', gap: '1rem', justifyContent: 'center', marginBottom: '4rem'}}>
+            <a href="/dashboard" style={{background: '#0ea5e9', color: 'white', padding: '14px 32px', borderRadius: '8px', textDecoration: 'none', fontSize: '1.125rem'}}>
+              14 Gün Ücretsiz Dene
+            </a>
+            <a href="#demo" style={{border: '2px solid #e5e7eb', padding: '14px 32px', borderRadius: '8px', textDecoration: 'none', color: '#475569'}}>
+              Demo İzle
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Grid */}
+      <section style={{padding: '5rem 2rem'}}>
+        <div style={{maxWidth: '1280px', margin: '0 auto'}}>
+          <h2 style={{fontSize: '2.5rem', fontWeight: 'bold', textAlign: 'center', marginBottom: '3rem'}}>
+            Tek Platform, Tüm İhtiyaçlar
+          </h2>
+          <div style={{display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2rem'}}>
+            <div style={{padding: '2rem', background: '#f8fafc', borderRadius: '12px'}}>
+              <div style={{fontSize: '2rem', marginBottom: '1rem'}}>📁</div>
+              <h3 style={{fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.5rem'}}>Dava Yönetimi</h3>
+              <p style={{color: '#64748b'}}>Tüm davalarınızı tek yerden takip edin</p>
+            </div>
+            <div style={{padding: '2rem', background: '#f8fafc', borderRadius: '12px'}}>
+              <div style={{fontSize: '2rem', marginBottom: '1rem'}}>👥</div>
+              <h3 style={{fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.5rem'}}>Müvekkil Takibi</h3>
+              <p style={{color: '#64748b'}}>Müvekkil bilgileri ve iletişim geçmişi</p>
+            </div>
+            <div style={{padding: '2rem', background: '#f8fafc', borderRadius: '12px'}}>
+              <div style={{fontSize: '2rem', marginBottom: '1rem'}}>📄</div>
+              <h3 style={{fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.5rem'}}>UYAP Entegrasyonu</h3>
+              <p style={{color: '#64748b'}}>Belgelerinizi UYAP sistemine gönderin</p>
+            </div>
+            <div style={{padding: '2rem', background: '#f8fafc', borderRadius: '12px'}}>
+              <div style={{fontSize: '2rem', marginBottom: '1rem'}}>📅</div>
+              <h3 style={{fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.5rem'}}>Takvim</h3>
+              <p style={{color: '#64748b'}}>Duruşma ve randevularınızı yönetin</p>
+            </div>
+            <div style={{padding: '2rem', background: '#f8fafc', borderRadius: '12px'}}>
+              <div style={{fontSize: '2rem', marginBottom: '1rem'}}>💰</div>
+              <h3 style={{fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.5rem'}}>Faturalandırma</h3>
+              <p style={{color: '#64748b'}}>Ücret takibi ve otomatik faturalama</p>
+            </div>
+            <div style={{padding: '2rem', background: '#f8fafc', borderRadius: '12px'}}>
+              <div style={{fontSize: '2rem', marginBottom: '1rem'}}>📊</div>
+              <h3 style={{fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.5rem'}}>Raporlama</h3>
+              <p style={{color: '#64748b'}}>Detaylı performans analizleri</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Demo Section */}
+      <section id="demo" style={{background: '#f8fafc', padding: '4rem 2rem'}}>
+        <div style={{maxWidth: '600px', margin: '0 auto', textAlign: 'center'}}>
+          <h2 style={{fontSize: '2rem', fontWeight: 'bold', marginBottom: '2rem'}}>Demo Hesapları</h2>
+          <div style={{background: 'white', padding: '2rem', borderRadius: '12px', textAlign: 'left'}}>
+            <div style={{marginBottom: '1rem', paddingBottom: '1rem', borderBottom: '1px solid #e5e7eb'}}>
+              <strong>Avukat:</strong> demo@avukatajanda.com / demo123
+            </div>
+            <div style={{marginBottom: '1rem', paddingBottom: '1rem', borderBottom: '1px solid #e5e7eb'}}>
+              <strong>Stajyer:</strong> stajyer@avukatajanda.com / stajyer123
+            </div>
+            <div>
+              <strong>Sekreter:</strong> sekreter@avukatajanda.com / sekreter123
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
