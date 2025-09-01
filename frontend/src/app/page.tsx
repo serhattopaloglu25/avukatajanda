@@ -1,131 +1,63 @@
-'use client';
-
-import { useEffect, useState } from 'react';
-import { Logo } from '../components/Logo';
-
 export default function HomePage() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState<any>(null);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
-    
-    if (token && userData) {
-      setIsLoggedIn(true);
-      setUser(JSON.parse(userData));
-    }
-
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setIsLoggedIn(false);
-    setUser(null);
-  };
-
-  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
-    e.preventDefault();
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-    setMobileMenuOpen(false);
-  };
-
   return (
     <div style={{fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', minHeight: '100vh', background: 'white'}}>
       {/* Navigation */}
       <nav style={{background: 'white', borderBottom: '1px solid #e5e7eb', position: 'sticky', top: 0, zIndex: 100}}>
         <div style={{maxWidth: '1280px', margin: '0 auto', padding: '0 1rem'}}>
           <div style={{height: '72px', display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
-            <a href="/" style={{textDecoration: 'none'}}>
-              <Logo size={isMobile ? 'small' : 'normal'} />
+            <a href="/" style={{textDecoration: 'none', fontSize: '1.5rem', fontWeight: 'bold', color: '#2c3e50'}}>
+              AvukatAjanda
             </a>
-
-            {!isMobile && (
-              <div style={{display: 'flex', gap: '2rem', alignItems: 'center'}}>
-                <a href="#features" onClick={(e) => scrollToSection(e, 'features')} style={{color: '#475569', textDecoration: 'none'}}>Özellikler</a>
-                <a href="#pricing" onClick={(e) => scrollToSection(e, 'pricing')} style={{color: '#475569', textDecoration: 'none'}}>Fiyatlandırma</a>
-                <a href="#contact" onClick={(e) => scrollToSection(e, 'contact')} style={{color: '#475569', textDecoration: 'none'}}>İletişim</a>
-                {isLoggedIn ? (
-                  <>
-                    <a href="/dashboard" style={{color: '#475569', textDecoration: 'none'}}>Dashboard</a>
-                    <button onClick={handleLogout} style={{background: '#ef4444', color: 'white', padding: '8px 16px', borderRadius: '6px', border: 'none', cursor: 'pointer'}}>
-                      Çıkış
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <a href="/login" style={{color: '#475569', textDecoration: 'none'}}>Giriş</a>
-                    <a href="/login" style={{background: '#3498db', color: 'white', padding: '8px 20px', borderRadius: '6px', textDecoration: 'none'}}>
-                      Ücretsiz Dene
-                    </a>
-                  </>
-                )}
-              </div>
-            )}
-
-            {isMobile && (
-              <button 
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                style={{background: 'none', border: 'none', padding: '8px', cursor: 'pointer'}}
-              >
-                <div style={{width: '24px', height: '2px', background: '#2c3e50', marginBottom: '5px'}}></div>
-                <div style={{width: '24px', height: '2px', background: '#2c3e50', marginBottom: '5px'}}></div>
-                <div style={{width: '24px', height: '2px', background: '#2c3e50'}}></div>
-              </button>
-            )}
-          </div>
-
-          {isMobile && mobileMenuOpen && (
-            <div style={{
-              position: 'absolute',
-              top: '72px',
-              left: 0,
-              right: 0,
-              background: 'white',
-              borderBottom: '1px solid #e5e7eb',
-              padding: '1rem',
-              boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-            }}>
-              <div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
-                <a href="#features" onClick={(e) => scrollToSection(e, 'features')} style={{color: '#475569', textDecoration: 'none', padding: '0.5rem'}}>Özellikler</a>
-                <a href="#pricing" onClick={(e) => scrollToSection(e, 'pricing')} style={{color: '#475569', textDecoration: 'none', padding: '0.5rem'}}>Fiyatlandırma</a>
-                <a href="#contact" onClick={(e) => scrollToSection(e, 'contact')} style={{color: '#475569', textDecoration: 'none', padding: '0.5rem'}}>İletişim</a>
-                {isLoggedIn ? (
-                  <>
-                    <a href="/dashboard" style={{color: '#475569', textDecoration: 'none', padding: '0.5rem'}}>Dashboard</a>
-                    <button onClick={handleLogout} style={{background: '#ef4444', color: 'white', padding: '0.75rem', borderRadius: '6px', border: 'none', width: '100%'}}>
-                      Çıkış Yap
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <a href="/login" style={{color: '#475569', textDecoration: 'none', padding: '0.5rem'}}>Giriş Yap</a>
-                    <a href="/login" style={{background: '#3498db', color: 'white', padding: '0.75rem', borderRadius: '6px', textDecoration: 'none', textAlign: 'center', display: 'block'}}>
-                      Ücretsiz Dene
-                    </a>
-                  </>
-                )}
-              </div>
+            <div style={{display: 'flex', gap: '2rem', alignItems: 'center'}}>
+              <a href="/login" style={{color: '#475569', textDecoration: 'none'}}>Giriş</a>
+              <a href="/login" style={{background: '#3498db', color: 'white', padding: '8px 20px', borderRadius: '6px', textDecoration: 'none'}}>
+                Ücretsiz Dene
+              </a>
             </div>
-          )}
+          </div>
         </div>
       </nav>
 
-      {/* Rest of the page content... */}
+      {/* Hero Section */}
+      <section style={{padding: '5rem 2rem', textAlign: 'center'}}>
+        <h1 style={{fontSize: '3rem', fontWeight: 'bold', color: '#0f172a', marginBottom: '1.5rem'}}>
+          Hukuk Büronuz İçin Komple Çözüm
+        </h1>
+        <p style={{fontSize: '1.25rem', color: '#64748b', marginBottom: '2rem', maxWidth: '800px', margin: '0 auto 2rem'}}>
+          Bulut tabanlı hukuk bürosu yazılımı
+        </p>
+        <a href="/login" style={{background: '#3498db', color: 'white', padding: '14px 32px', borderRadius: '8px', textDecoration: 'none', fontSize: '1.125rem', display: 'inline-block'}}>
+          14 Gün Ücretsiz Dene
+        </a>
+      </section>
+
+      {/* Features */}
+      <section style={{padding: '3rem 2rem', background: '#f8fafc'}}>
+        <div style={{maxWidth: '1280px', margin: '0 auto'}}>
+          <h2 style={{fontSize: '2rem', fontWeight: 'bold', textAlign: 'center', marginBottom: '3rem'}}>
+            Özellikler
+          </h2>
+          <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem'}}>
+            <div style={{background: 'white', padding: '2rem', borderRadius: '8px'}}>
+              <h3 style={{fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.5rem'}}>📁 Dava Takibi</h3>
+              <p style={{color: '#64748b'}}>Tüm davalarınızı tek yerden yönetin</p>
+            </div>
+            <div style={{background: 'white', padding: '2rem', borderRadius: '8px'}}>
+              <h3 style={{fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.5rem'}}>👥 Müvekkil Yönetimi</h3>
+              <p style={{color: '#64748b'}}>Müvekkil bilgilerini organize edin</p>
+            </div>
+            <div style={{background: 'white', padding: '2rem', borderRadius: '8px'}}>
+              <h3 style={{fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.5rem'}}>📄 UYAP Entegrasyonu</h3>
+              <p style={{color: '#64748b'}}>UYAP sistemine direkt bağlantı</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer style={{background: '#1f2937', color: 'white', padding: '2rem', textAlign: 'center'}}>
+        <p>© 2025 AvukatAjanda. Tüm hakları saklıdır.</p>
+      </footer>
     </div>
   );
 }
