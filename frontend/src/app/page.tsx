@@ -1,6 +1,29 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+
 export default function HomePage() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    // Check if user is logged in
+    const token = localStorage.getItem('token');
+    const userData = localStorage.getItem('user');
+    
+    if (token && userData) {
+      setIsLoggedIn(true);
+      setUser(JSON.parse(userData));
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setIsLoggedIn(false);
+    setUser(null);
+  };
+
   return (
     <div style={{fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', minHeight: '100vh', background: 'white'}}>
       {/* Navigation with Logo */}
@@ -22,8 +45,33 @@ export default function HomePage() {
             </div>
           </div>
           <div style={{display: 'flex', gap: '1rem', alignItems: 'center'}}>
-            <a href="/login" style={{color: '#475569', textDecoration: 'none'}}>Giriş Yap</a>
-            <a href="/login" style={{background: '#0ea5e9', color: 'white', padding: '10px 20px', borderRadius: '6px', textDecoration: 'none'}}>Ücretsiz Dene</a>
+            {isLoggedIn ? (
+              <>
+                <span style={{color: '#475569', fontSize: '0.875rem'}}>
+                  Hoşgeldin, {user?.name || user?.email?.split('@')[0]}
+                </span>
+                <a href="/dashboard" style={{color: '#475569', textDecoration: 'none'}}>Dashboard</a>
+                <button 
+                  onClick={handleLogout}
+                  style={{
+                    background: '#ef4444',
+                    color: 'white',
+                    padding: '8px 16px',
+                    borderRadius: '6px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontSize: '0.875rem'
+                  }}
+                >
+                  Çıkış Yap
+                </button>
+              </>
+            ) : (
+              <>
+                <a href="/login" style={{color: '#475569', textDecoration: 'none'}}>Giriş Yap</a>
+                <a href="/login" style={{background: '#0ea5e9', color: 'white', padding: '10px 20px', borderRadius: '6px', textDecoration: 'none'}}>Ücretsiz Dene</a>
+              </>
+            )}
           </div>
         </div>
       </nav>
@@ -38,17 +86,25 @@ export default function HomePage() {
             Dava takibi, müvekkil yönetimi, belge organizasyonu ve UYAP entegrasyonu ile büronuzu dijitalleştirin
           </p>
           <div style={{display: 'flex', gap: '1rem', justifyContent: 'center', marginBottom: '4rem'}}>
-            <a href="/login" style={{background: '#0ea5e9', color: 'white', padding: '14px 32px', borderRadius: '8px', textDecoration: 'none', fontSize: '1.125rem'}}>
-              14 Gün Ücretsiz Dene
-            </a>
-            <a href="#contact" style={{border: '2px solid #e5e7eb', padding: '14px 32px', borderRadius: '8px', textDecoration: 'none', color: '#475569'}}>
-              İletişime Geç
-            </a>
+            {isLoggedIn ? (
+              <a href="/dashboard" style={{background: '#0ea5e9', color: 'white', padding: '14px 32px', borderRadius: '8px', textDecoration: 'none', fontSize: '1.125rem'}}>
+                Dashboard'a Git
+              </a>
+            ) : (
+              <>
+                <a href="/login" style={{background: '#0ea5e9', color: 'white', padding: '14px 32px', borderRadius: '8px', textDecoration: 'none', fontSize: '1.125rem'}}>
+                  14 Gün Ücretsiz Dene
+                </a>
+                <a href="#contact" style={{border: '2px solid #e5e7eb', padding: '14px 32px', borderRadius: '8px', textDecoration: 'none', color: '#475569'}}>
+                  İletişime Geç
+                </a>
+              </>
+            )}
           </div>
         </div>
       </section>
 
-      {/* Features Grid - aynı kalacak */}
+      {/* Features Grid */}
       <section style={{padding: '5rem 2rem'}}>
         <div style={{maxWidth: '1280px', margin: '0 auto'}}>
           <h2 style={{fontSize: '2.5rem', fontWeight: 'bold', textAlign: 'center', marginBottom: '3rem'}}>
@@ -90,28 +146,30 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section style={{background: '#0ea5e9', padding: '4rem 2rem', color: 'white'}}>
-        <div style={{maxWidth: '800px', margin: '0 auto', textAlign: 'center'}}>
-          <h2 style={{fontSize: '2rem', fontWeight: 'bold', marginBottom: '1rem'}}>
-            Hukuk büronuzu dijitalleştirmeye hazır mısınız?
-          </h2>
-          <p style={{fontSize: '1.125rem', marginBottom: '2rem', opacity: 0.9}}>
-            14 gün ücretsiz deneme sürümü ile başlayın
-          </p>
-          <a href="/login" style={{
-            background: 'white',
-            color: '#0ea5e9',
-            padding: '14px 32px',
-            borderRadius: '8px',
-            textDecoration: 'none',
-            fontSize: '1.125rem',
-            display: 'inline-block',
-            fontWeight: '600'
-          }}>
-            Hemen Başla
-          </a>
-        </div>
-      </section>
+      {!isLoggedIn && (
+        <section style={{background: '#0ea5e9', padding: '4rem 2rem', color: 'white'}}>
+          <div style={{maxWidth: '800px', margin: '0 auto', textAlign: 'center'}}>
+            <h2 style={{fontSize: '2rem', fontWeight: 'bold', marginBottom: '1rem'}}>
+              Hukuk büronuzu dijitalleştirmeye hazır mısınız?
+            </h2>
+            <p style={{fontSize: '1.125rem', marginBottom: '2rem', opacity: 0.9}}>
+              14 gün ücretsiz deneme sürümü ile başlayın
+            </p>
+            <a href="/login" style={{
+              background: 'white',
+              color: '#0ea5e9',
+              padding: '14px 32px',
+              borderRadius: '8px',
+              textDecoration: 'none',
+              fontSize: '1.125rem',
+              display: 'inline-block',
+              fontWeight: '600'
+            }}>
+              Hemen Başla
+            </a>
+          </div>
+        </section>
+      )}
     </div>
   );
 }
