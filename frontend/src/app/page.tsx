@@ -1,115 +1,117 @@
+'use client';
+
 export default function HomePage() {
   return (
     <div style={{
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      color: 'white',
       fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '2rem'
+      background: 'white',
+      color: '#1a202c',
+      minHeight: '100vh'
     }}>
-      <div style={{
-        textAlign: 'center',
-        maxWidth: '600px'
+      {/* Header */}
+      <header style={{
+        borderBottom: '1px solid #e2e8f0',
+        background: 'white',
+        padding: '0 2rem'
       }}>
-        <h1 style={{
-          fontSize: '3rem',
-          fontWeight: 'bold',
-          marginBottom: '1rem',
-          textShadow: '0 2px 4px rgba(0,0,0,0.3)'
-        }}>
-          AvukatAjanda SaaS
-        </h1>
-        
-        <p style={{
-          fontSize: '1.25rem',
-          marginBottom: '2rem',
-          opacity: '0.9'
-        }}>
-          Modern Hukuk Bürosu Yönetim Sistemi - Production Ready
-        </p>
-        
         <div style={{
-          background: 'rgba(255,255,255,0.95)',
-          borderRadius: '16px',
-          padding: '2rem',
-          color: '#333',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+          maxWidth: '1200px',
+          margin: '0 auto',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          height: '64px'
         }}>
-          <h2 style={{fontSize: '1.5rem', fontWeight: '600', marginBottom: '1.5rem'}}>
-            🚀 Production Demo
-          </h2>
-          
-          <div style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
-            <a 
-              href="/dashboard"
-              style={{
-                background: '#4F46E5',
-                color: 'white',
-                padding: '12px 24px',
-                borderRadius: '8px',
-                textDecoration: 'none',
-                fontWeight: '500',
-                display: 'block'
-              }}
-            >
-              📊 Dashboard Demo
-            </a>
-            
-            <a 
-              href="/dashboard/cases"
-              style={{
-                background: '#059669',
-                color: 'white',
-                padding: '12px 24px',
-                borderRadius: '8px',
-                textDecoration: 'none',
-                fontWeight: '500',
-                display: 'block'
-              }}
-            >
-              📁 Cases Module
-            </a>
-            
-            <a 
-              href="/dashboard/billing"
-              style={{
-                background: '#7C3AED',
-                color: 'white',
-                padding: '12px 24px',
-                borderRadius: '8px',
-                textDecoration: 'none',
-                fontWeight: '500',
-                display: 'block'
-              }}
-            >
-              💳 SaaS Billing
-            </a>
+          <div style={{display: 'flex', alignItems: 'center'}}>
+            <div style={{
+              width: '32px',
+              height: '32px',
+              background: '#3182ce',
+              borderRadius: '4px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginRight: '12px'
+            }}>
+              <span style={{color: 'white', fontWeight: '600'}}>A</span>
+            </div>
+            <span style={{fontSize: '20px', fontWeight: '600'}}>AvukatAjanda</span>
           </div>
           
-          <div style={{
-            marginTop: '1.5rem',
-            fontSize: '0.875rem',
-            color: '#666',
-            textAlign: 'left'
+          <a href="/dashboard" style={{
+            background: '#3182ce',
+            color: 'white',
+            padding: '8px 16px',
+            borderRadius: '4px',
+            textDecoration: 'none',
+            fontWeight: '500'
           }}>
-            <strong>Demo Hesapları:</strong><br/>
-            • Avukat: demo@avukatajanda.com / demo123<br/>
-            • Stajyer: stajyer@avukatajanda.com / stajyer123<br/>
-            • Sekreter: sekreter@avukatajanda.com / sekreter123
+            Giriş Yap
+          </a>
+        </div>
+      </header>
+
+      {/* Hero */}
+      <section style={{padding: '80px 2rem', background: 'white'}}>
+        <div style={{maxWidth: '1200px', margin: '0 auto', textAlign: 'center'}}>
+          <h1 style={{
+            fontSize: '48px',
+            fontWeight: '700',
+            color: '#1a202c',
+            margin: '0 0 1.5rem 0'
+          }}>
+            Hukuk büronuzu modernleştirin
+          </h1>
+          <p style={{
+            fontSize: '20px',
+            color: '#4a5568',
+            margin: '0 0 2rem 0',
+            maxWidth: '600px',
+            marginLeft: 'auto',
+            marginRight: 'auto'
+          }}>
+            Dava yönetimi, müvekkil takibi ve belge organizasyonu için kapsamlı platform
+          </p>
+          
+          <a href="/dashboard" style={{
+            background: '#3182ce',
+            color: 'white',
+            padding: '12px 24px',
+            borderRadius: '4px',
+            textDecoration: 'none',
+            fontWeight: '600',
+            fontSize: '16px',
+            display: 'inline-block',
+            marginBottom: '3rem'
+          }}>
+            Sisteme Giriş
+          </a>
+
+          <div style={{
+            background: '#f7fafc',
+            border: '1px solid #e2e8f0',
+            borderRadius: '8px',
+            padding: '2rem',
+            maxWidth: '400px',
+            margin: '0 auto'
+          }}>
+            <h3 style={{fontSize: '18px', fontWeight: '600', marginBottom: '1rem'}}>
+              Demo Hesapları
+            </h3>
+            <div style={{fontSize: '14px', color: '#4a5568', textAlign: 'left'}}>
+              <div style={{marginBottom: '0.5rem'}}>
+                <strong>Avukat:</strong> demo@avukatajanda.com / demo123
+              </div>
+              <div style={{marginBottom: '0.5rem'}}>
+                <strong>Stajyer:</strong> stajyer@avukatajanda.com / stajyer123
+              </div>
+              <div>
+                <strong>Sekreter:</strong> sekreter@avukatajanda.com / sekreter123
+              </div>
+            </div>
           </div>
         </div>
-        
-        <div style={{
-          marginTop: '2rem',
-          fontSize: '0.9rem',
-          opacity: '0.8'
-        }}>
-          ✅ Backend API: Aktif | ✅ Multi-tenant SaaS | ✅ UYAP Integration
-        </div>
-      </div>
+      </section>
     </div>
   );
 }
