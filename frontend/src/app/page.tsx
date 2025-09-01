@@ -11,7 +11,7 @@ export default function HomePage() {
             <div style={{display: 'flex', gap: '2rem'}}>
               <a href="#features" style={{color: '#475569', textDecoration: 'none'}}>Özellikler</a>
               <a href="#pricing" style={{color: '#475569', textDecoration: 'none'}}>Fiyatlandırma</a>
-              <a href="#demo" style={{color: '#475569', textDecoration: 'none'}}>Demo</a>
+              <a href="#contact" style={{color: '#475569', textDecoration: 'none'}}>İletişim</a>
             </div>
           </div>
           <div style={{display: 'flex', gap: '1rem', alignItems: 'center'}}>
@@ -34,8 +34,8 @@ export default function HomePage() {
             <a href="/dashboard" style={{background: '#0ea5e9', color: 'white', padding: '14px 32px', borderRadius: '8px', textDecoration: 'none', fontSize: '1.125rem'}}>
               14 Gün Ücretsiz Dene
             </a>
-            <a href="#demo" style={{border: '2px solid #e5e7eb', padding: '14px 32px', borderRadius: '8px', textDecoration: 'none', color: '#475569'}}>
-              Demo İzle
+            <a href="/contact" style={{border: '2px solid #e5e7eb', padding: '14px 32px', borderRadius: '8px', textDecoration: 'none', color: '#475569'}}>
+              İletişime Geç
             </a>
           </div>
         </div>
@@ -82,21 +82,27 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Demo Section */}
-      <section id="demo" style={{background: '#f8fafc', padding: '4rem 2rem'}}>
-        <div style={{maxWidth: '600px', margin: '0 auto', textAlign: 'center'}}>
-          <h2 style={{fontSize: '2rem', fontWeight: 'bold', marginBottom: '2rem'}}>Demo Hesapları</h2>
-          <div style={{background: 'white', padding: '2rem', borderRadius: '12px', textAlign: 'left'}}>
-            <div style={{marginBottom: '1rem', paddingBottom: '1rem', borderBottom: '1px solid #e5e7eb'}}>
-              <strong>Avukat:</strong> demo@avukatajanda.com / demo123
-            </div>
-            <div style={{marginBottom: '1rem', paddingBottom: '1rem', borderBottom: '1px solid #e5e7eb'}}>
-              <strong>Stajyer:</strong> stajyer@avukatajanda.com / stajyer123
-            </div>
-            <div>
-              <strong>Sekreter:</strong> sekreter@avukatajanda.com / sekreter123
-            </div>
-          </div>
+      {/* CTA Section */}
+      <section style={{background: '#0ea5e9', padding: '4rem 2rem', color: 'white'}}>
+        <div style={{maxWidth: '800px', margin: '0 auto', textAlign: 'center'}}>
+          <h2 style={{fontSize: '2rem', fontWeight: 'bold', marginBottom: '1rem'}}>
+            Hukuk büronuzu dijitalleştirmeye hazır mısınız?
+          </h2>
+          <p style={{fontSize: '1.125rem', marginBottom: '2rem', opacity: 0.9}}>
+            14 gün ücretsiz deneme sürümü ile başlayın
+          </p>
+          <a href="/register" style={{
+            background: 'white',
+            color: '#0ea5e9',
+            padding: '14px 32px',
+            borderRadius: '8px',
+            textDecoration: 'none',
+            fontSize: '1.125rem',
+            display: 'inline-block',
+            fontWeight: '600'
+          }}>
+            Hemen Başla
+          </a>
         </div>
       </section>
     </div>
