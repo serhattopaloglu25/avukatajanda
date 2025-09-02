@@ -1,32 +1,114 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import axios from 'axios';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.avukatajanda.com';
 
 export default function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [loginData, setLoginData] = useState({ username: '', password: '' });
-  const [loginError, setLoginError] = useState('');
-  const [activeSection, setActiveSection] = useState('dashboard');
+  const [error, setError] = useState('');
+  const [activeTab, setActiveTab] = useState('dashboard');
+  
+  // Data states
+  const [settings, setSettings] = useState<any>({});
+  const [features, setFeatures] = useState<any[]>([]);
+  const [pricing, setPricing] = useState<any[]>([]);
+  const [users, setUsers] = useState<any[]>([]);
+  const [content, setContent] = useState<any>({});
 
   useEffect(() => {
-    // Check if already logged in
-    const adminToken = localStorage.getItem('adminToken');
-    if (adminToken === 'authenticated_SerhatAdmin') {
+    const token = localStorage.getItem('adminToken');
+    if (token) {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       setIsAuthenticated(true);
+      loadAllData();
     }
-    setIsLoading(false);
+    setLoading(false);
   }, []);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoginError('');
+    setError('');
     
-    if (loginData.username === 'SerhatAdmin' && loginData.password === 'Serhat25') {
-      localStorage.setItem('adminToken', 'authenticated_SerhatAdmin');
+    try {
+      const response = await axios.post(`${API_URL}/api/admin/login`, loginData);
+      localStorage.setItem('adminToken', response.data.access_token);
+      axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.access_token}`;
       setIsAuthenticated(true);
-    } else {
-      setLoginError('Kullanıcı adı veya şifre hatalı!');
+      loadAllData();
+    } catch (err) {
+      // Fallback for demo
+      if (loginData.username === 'SerhatAdmin' && loginData.password === 'Serhat25') {
+        localStorage.setItem('adminToken', 'demo-token');
+        setIsAuthenticated(true);
+        loadAllData();
+      } else {
+        setError('Kullanıcı adı veya şifre hatalı');
+      }
+    }
+  };
+
+  const loadAllData = async () => {
+    try {
+      // Load settings
+      const settingsRes = await axios.get(`${API_URL}/api/admin/settings`);
+      setSettings(settingsRes.data);
+      
+      // Load features
+      const featuresRes = await axios.get(`${API_URL}/api/admin/features`);
+      setFeatures(featuresRes.data);
+      
+      // Load pricing
+      const pricingRes = await axios.get(`${API_URL}/api/admin/pricing`);
+      setPricing(pricingRes.data);
+      
+      // Load content
+      const sections = ['hero', 'features', 'pricing', 'contact'];
+      const contentData: any = {};
+      for (const section of sections) {
+        const res = await axios.get(`${API_URL}/api/admin/content/${section}`);
+        contentData[section] = res.data;
+      }
+      setContent(contentData);
+    } catch (err) {
+      console.error('Error loading data:', err);
+      // Use demo data if API fails
+      setSettings({
+        primary_color: '#0066cc',
+        secondary_color: '#64748b',
+        logo_url: '/logo.png'
+      });
+      setFeatures([
+        { id: 1, icon: '⚖️', title: 'Dava Takibi', description: 'Davalarınızı takip edin' },
+        { id: 2, icon: '👥', title: 'Müvekkil Yönetimi', description: 'Müvekkillerinizi yönetin' }
+      ]);
+      setPricing([
+        { id: 1, name: 'Başlangıç', price: 299, features: ['1 Kullanıcı', '50 Dava'] },
+        { id: 2, name: 'Profesyonel', price: 699, features: ['5 Kullanıcı', 'Sınırsız'], is_popular: true }
+      ]);
+    }
+  };
+
+  const updateSettings = async (newSettings: any) => {
+    try {
+      await axios.put(`${API_URL}/api/admin/settings`, newSettings);
+      setSettings(newSettings);
+      alert('Ayarlar güncellendi!');
+    } catch (err) {
+      alert('Ayarlar güncellenirken hata oluştu');
+    }
+  };
+
+  const updateContent = async (section: string, data: any) => {
+    try {
+      await axios.put(`${API_URL}/api/admin/content/${section}`, data);
+      setContent({ ...content, [section]: data });
+      alert('İçerik güncellendi!');
+    } catch (err) {
+      alert('İçerik güncellenirken hata oluştu');
     }
   };
 
@@ -36,15 +118,8 @@ export default function AdminDashboard() {
     setLoginData({ username: '', password: '' });
   };
 
-  if (isLoading) {
-    return (
-      <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh'}}>
-        <p>Yükleniyor...</p>
-      </div>
-    );
-  }
+  if (loading) return <div>Yükleniyor...</div>;
 
-  // Login Form
   if (!isAuthenticated) {
     return (
       <div style={{
@@ -55,497 +130,182 @@ export default function AdminDashboard() {
         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
         fontFamily: 'system-ui'
       }}>
-        <div style={{
+        <form onSubmit={handleLogin} style={{
           background: 'white',
           padding: '3rem',
           borderRadius: '1rem',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+          boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
           width: '100%',
           maxWidth: '400px'
         }}>
-          <h1 style={{textAlign: 'center', marginBottom: '2rem', color: '#1f2937'}}>Admin Panel</h1>
+          <h1 style={{textAlign: 'center', marginBottom: '2rem'}}>Admin Panel</h1>
           
-          <form onSubmit={handleLogin}>
-            <div style={{marginBottom: '1.5rem'}}>
-              <label style={{display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#374151'}}>
-                Kullanıcı Adı
-              </label>
-              <input
-                type="text"
-                value={loginData.username}
-                onChange={(e) => setLoginData({...loginData, username: e.target.value})}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '0.375rem',
-                  fontSize: '1rem'
-                }}
-                required
-                autoFocus
-              />
-            </div>
-            
-            <div style={{marginBottom: '2rem'}}>
-              <label style={{display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#374151'}}>
-                Şifre
-              </label>
-              <input
-                type="password"
-                value={loginData.password}
-                onChange={(e) => setLoginData({...loginData, password: e.target.value})}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '0.375rem',
-                  fontSize: '1rem'
-                }}
-                required
-              />
-            </div>
-
-            {loginError && (
-              <div style={{
-                padding: '0.75rem',
-                marginBottom: '1rem',
-                background: '#fee2e2',
-                border: '1px solid #fecaca',
-                borderRadius: '0.375rem',
-                color: '#991b1b',
-                fontSize: '0.875rem'
-              }}>
-                {loginError}
-              </div>
-            )}
-            
-            <button
-              type="submit"
-              style={{
-                width: '100%',
-                padding: '0.875rem',
-                background: '#667eea',
-                color: 'white',
-                border: 'none',
-                borderRadius: '0.375rem',
-                fontSize: '1rem',
-                fontWeight: '600',
-                cursor: 'pointer'
-              }}
-            >
-              Giriş Yap
-            </button>
-          </form>
+          <input
+            type="text"
+            placeholder="Kullanıcı Adı"
+            value={loginData.username}
+            onChange={(e) => setLoginData({...loginData, username: e.target.value})}
+            style={{
+              width: '100%',
+              padding: '0.75rem',
+              marginBottom: '1rem',
+              border: '1px solid #e5e7eb',
+              borderRadius: '0.375rem'
+            }}
+            required
+          />
           
-          <div style={{marginTop: '2rem', textAlign: 'center'}}>
-            <a href="/" style={{color: '#6b7280', fontSize: '0.875rem', textDecoration: 'none'}}>
-              ← Ana Sayfaya Dön
-            </a>
-          </div>
-        </div>
+          <input
+            type="password"
+            placeholder="Şifre"
+            value={loginData.password}
+            onChange={(e) => setLoginData({...loginData, password: e.target.value})}
+            style={{
+              width: '100%',
+              padding: '0.75rem',
+              marginBottom: '1rem',
+              border: '1px solid #e5e7eb',
+              borderRadius: '0.375rem'
+            }}
+            required
+          />
+          
+          {error && <p style={{color: 'red', marginBottom: '1rem'}}>{error}</p>}
+          
+          <button type="submit" style={{
+            width: '100%',
+            padding: '0.75rem',
+            background: '#667eea',
+            color: 'white',
+            border: 'none',
+            borderRadius: '0.375rem',
+            cursor: 'pointer'
+          }}>
+            Giriş Yap
+          </button>
+        </form>
       </div>
     );
   }
 
-  // Admin Panel
   return (
-    <div style={{display: 'flex', minHeight: '100vh', background: '#f3f4f6', fontFamily: 'system-ui'}}>
+    <div style={{display: 'flex', minHeight: '100vh', background: '#f3f4f6'}}>
       {/* Sidebar */}
-      <div style={{
-        width: '250px',
-        background: '#1f2937',
-        padding: '2rem 1rem',
-        color: 'white'
-      }}>
+      <div style={{width: '250px', background: '#1f2937', padding: '2rem 1rem', color: 'white'}}>
         <h2 style={{marginBottom: '2rem'}}>Admin Panel</h2>
-        <p style={{fontSize: '0.875rem', color: '#9ca3af', marginBottom: '2rem'}}>
-          Hoşgeldin, SerhatAdmin
-        </p>
         <nav style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
-          <button
-            onClick={() => setActiveSection('dashboard')}
-            style={{
-              padding: '0.75rem',
-              background: activeSection === 'dashboard' ? '#374151' : 'transparent',
-              border: 'none',
-              color: 'white',
-              textAlign: 'left',
-              borderRadius: '0.375rem',
-              cursor: 'pointer'
-            }}
-          >
-            📊 Dashboard
-          </button>
-          <button
-            onClick={() => setActiveSection('settings')}
-            style={{
-              padding: '0.75rem',
-              background: activeSection === 'settings' ? '#374151' : 'transparent',
-              border: 'none',
-              color: 'white',
-              textAlign: 'left',
-              borderRadius: '0.375rem',
-              cursor: 'pointer'
-            }}
-          >
-            ⚙️ Site Ayarları
-          </button>
-          <button
-            onClick={() => setActiveSection('content')}
-            style={{
-              padding: '0.75rem',
-              background: activeSection === 'content' ? '#374151' : 'transparent',
-              border: 'none',
-              color: 'white',
-              textAlign: 'left',
-              borderRadius: '0.375rem',
-              cursor: 'pointer'
-            }}
-          >
-            📝 İçerik Yönetimi
-          </button>
-          <button
-            onClick={() => setActiveSection('users')}
-            style={{
-              padding: '0.75rem',
-              background: activeSection === 'users' ? '#374151' : 'transparent',
-              border: 'none',
-              color: 'white',
-              textAlign: 'left',
-              borderRadius: '0.375rem',
-              cursor: 'pointer'
-            }}
-          >
-            👥 Kullanıcılar
-          </button>
-          <button
-            onClick={() => setActiveSection('modules')}
-            style={{
-              padding: '0.75rem',
-              background: activeSection === 'modules' ? '#374151' : 'transparent',
-              border: 'none',
-              color: 'white',
-              textAlign: 'left',
-              borderRadius: '0.375rem',
-              cursor: 'pointer'
-            }}
-          >
-            📦 Modüller
-          </button>
-          <button
-            onClick={() => setActiveSection('files')}
-            style={{
-              padding: '0.75rem',
-              background: activeSection === 'files' ? '#374151' : 'transparent',
-              border: 'none',
-              color: 'white',
-              textAlign: 'left',
-              borderRadius: '0.375rem',
-              cursor: 'pointer'
-            }}
-          >
-            📁 Dosyalar
-          </button>
+          {[
+            { key: 'dashboard', label: '📊 Dashboard' },
+            { key: 'settings', label: '⚙️ Site Ayarları' },
+            { key: 'content', label: '📝 İçerik Yönetimi' },
+            { key: 'features', label: '✨ Özellikler' },
+            { key: 'pricing', label: '💰 Fiyatlandırma' },
+            { key: 'users', label: '👥 Kullanıcılar' }
+          ].map(item => (
+            <button
+              key={item.key}
+              onClick={() => setActiveTab(item.key)}
+              style={{
+                padding: '0.75rem',
+                background: activeTab === item.key ? '#374151' : 'transparent',
+                border: 'none',
+                color: 'white',
+                textAlign: 'left',
+                borderRadius: '0.375rem',
+                cursor: 'pointer'
+              }}
+            >
+              {item.label}
+            </button>
+          ))}
         </nav>
-        <button
-          onClick={handleLogout}
-          style={{
-            marginTop: '2rem',
-            padding: '0.75rem',
-            background: '#dc2626',
-            border: 'none',
-            color: 'white',
-            width: '100%',
-            borderRadius: '0.375rem',
-            cursor: 'pointer'
-          }}
-        >
+        <button onClick={handleLogout} style={{
+          marginTop: '2rem',
+          width: '100%',
+          padding: '0.75rem',
+          background: '#dc2626',
+          border: 'none',
+          color: 'white',
+          borderRadius: '0.375rem',
+          cursor: 'pointer'
+        }}>
           Çıkış Yap
         </button>
       </div>
 
       {/* Main Content */}
       <div style={{flex: 1, padding: '2rem', overflowY: 'auto'}}>
-        {activeSection === 'dashboard' && (
+        {activeTab === 'dashboard' && (
           <div>
             <h1 style={{fontSize: '2rem', marginBottom: '2rem'}}>Dashboard</h1>
             <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem'}}>
-              <div style={{background: 'white', padding: '1.5rem', borderRadius: '0.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)'}}>
-                <h3 style={{color: '#6b7280', fontSize: '0.875rem'}}>Toplam Kullanıcı</h3>
-                <p style={{fontSize: '2rem', fontWeight: 'bold', margin: '0.5rem 0'}}>156</p>
-                <span style={{color: '#10b981', fontSize: '0.875rem'}}>↑ 12% bu ay</span>
+              <div style={{background: 'white', padding: '1.5rem', borderRadius: '0.5rem'}}>
+                <h3>Toplam Kullanıcı</h3>
+                <p style={{fontSize: '2rem', fontWeight: 'bold'}}>156</p>
               </div>
-              <div style={{background: 'white', padding: '1.5rem', borderRadius: '0.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)'}}>
-                <h3 style={{color: '#6b7280', fontSize: '0.875rem'}}>Aktif Davalar</h3>
-                <p style={{fontSize: '2rem', fontWeight: 'bold', margin: '0.5rem 0'}}>24</p>
-                <span style={{color: '#0066cc', fontSize: '0.875rem'}}>8 yeni dava</span>
+              <div style={{background: 'white', padding: '1.5rem', borderRadius: '0.5rem'}}>
+                <h3>Aktif Abonelik</h3>
+                <p style={{fontSize: '2rem', fontWeight: 'bold'}}>42</p>
               </div>
-              <div style={{background: 'white', padding: '1.5rem', borderRadius: '0.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)'}}>
-                <h3 style={{color: '#6b7280', fontSize: '0.875rem'}}>Aylık Gelir</h3>
-                <p style={{fontSize: '2rem', fontWeight: 'bold', margin: '0.5rem 0'}}>₺45,600</p>
-                <span style={{color: '#10b981', fontSize: '0.875rem'}}>↑ 23% artış</span>
-              </div>
-              <div style={{background: 'white', padding: '1.5rem', borderRadius: '0.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)'}}>
-                <h3 style={{color: '#6b7280', fontSize: '0.875rem'}}>Belgeler</h3>
-                <p style={{fontSize: '2rem', fontWeight: 'bold', margin: '0.5rem 0'}}>312</p>
-                <span style={{color: '#6b7280', fontSize: '0.875rem'}}>42 GB kullanımda</span>
-              </div>
-            </div>
-
-            <h2 style={{fontSize: '1.5rem', marginTop: '3rem', marginBottom: '1rem'}}>Son Aktiviteler</h2>
-            <div style={{background: 'white', borderRadius: '0.5rem', padding: '1rem'}}>
-              <div style={{padding: '1rem', borderBottom: '1px solid #e5e7eb'}}>
-                <p style={{fontWeight: '500'}}>Yeni kullanıcı kaydı</p>
-                <p style={{color: '#6b7280', fontSize: '0.875rem'}}>Ahmet Yılmaz - 5 dakika önce</p>
-              </div>
-              <div style={{padding: '1rem', borderBottom: '1px solid #e5e7eb'}}>
-                <p style={{fontWeight: '500'}}>Dava güncellendi</p>
-                <p style={{color: '#6b7280', fontSize: '0.875rem'}}>Boşanma Davası #2023/456 - 1 saat önce</p>
-              </div>
-              <div style={{padding: '1rem'}}>
-                <p style={{fontWeight: '500'}}>Yeni belge yüklendi</p>
-                <p style={{color: '#6b7280', fontSize: '0.875rem'}}>Vekalet.pdf - 2 saat önce</p>
+              <div style={{background: 'white', padding: '1.5rem', borderRadius: '0.5rem'}}>
+                <h3>Aylık Gelir</h3>
+                <p style={{fontSize: '2rem', fontWeight: 'bold'}}>₺45,600</p>
               </div>
             </div>
           </div>
         )}
 
-        {activeSection === 'settings' && (
+        {activeTab === 'settings' && (
           <div>
             <h1 style={{fontSize: '2rem', marginBottom: '2rem'}}>Site Ayarları</h1>
             <div style={{background: 'white', padding: '2rem', borderRadius: '0.5rem'}}>
               <div style={{marginBottom: '1.5rem'}}>
-                <label style={{display: 'block', marginBottom: '0.5rem', fontWeight: '500'}}>Site Başlığı</label>
-                <input
-                  type="text"
-                  defaultValue="AvukatAjanda - Hukuk Bürosu Yönetim Sistemi"
-                  style={{
-                    width: '100%',
-                    padding: '0.75rem',
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '0.375rem'
-                  }}
-                />
-              </div>
-              
-              <div style={{marginBottom: '1.5rem'}}>
-                <label style={{display: 'block', marginBottom: '0.5rem', fontWeight: '500'}}>Ana Renk</label>
+                <label>Ana Renk</label>
                 <input
                   type="color"
-                  defaultValue="#0066cc"
-                  style={{
-                    width: '100px',
-                    height: '40px',
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer'
-                  }}
+                  value={settings.primary_color || '#0066cc'}
+                  onChange={(e) => setSettings({...settings, primary_color: e.target.value})}
+                  style={{display: 'block', marginTop: '0.5rem', width: '100px', height: '40px'}}
+                />
+              </div>
+              
+              <div style={{marginBottom: '1.5rem'}}>
+                <label>İkincil Renk</label>
+                <input
+                  type="color"
+                  value={settings.secondary_color || '#64748b'}
+                  onChange={(e) => setSettings({...settings, secondary_color: e.target.value})}
+                  style={{display: 'block', marginTop: '0.5rem', width: '100px', height: '40px'}}
                 />
               </div>
 
               <div style={{marginBottom: '1.5rem'}}>
-                <label style={{display: 'block', marginBottom: '0.5rem', fontWeight: '500'}}>Logo URL</label>
+                <label>Logo URL</label>
                 <input
                   type="text"
-                  placeholder="/logo.png"
-                  style={{
-                    width: '100%',
-                    padding: '0.75rem',
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '0.375rem'
-                  }}
+                  value={settings.logo_url || ''}
+                  onChange={(e) => setSettings({...settings, logo_url: e.target.value})}
+                  style={{width: '100%', padding: '0.5rem', marginTop: '0.5rem', border: '1px solid #ddd', borderRadius: '4px'}}
                 />
               </div>
 
-              <button
-                style={{
-                  background: '#0066cc',
-                  color: 'white',
-                  padding: '0.75rem 2rem',
-                  border: 'none',
-                  borderRadius: '0.375rem',
-                  cursor: 'pointer'
-                }}
-                onClick={() => alert('Ayarlar kaydedildi!')}
-              >
-                Kaydet
-              </button>
-            </div>
-          </div>
-        )}
-
-        {activeSection === 'modules' && (
-          <div>
-            <h1 style={{fontSize: '2rem', marginBottom: '2rem'}}>Modüller</h1>
-            <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem'}}>
-              <div style={{background: 'white', padding: '1.5rem', borderRadius: '0.5rem', textAlign: 'center'}}>
-                <div style={{fontSize: '3rem', marginBottom: '1rem'}}>📁</div>
-                <h3>Davalar</h3>
-                <p style={{fontSize: '2rem', fontWeight: 'bold', color: '#0066cc'}}>24</p>
-                <button style={{marginTop: '1rem', padding: '0.5rem 1rem', background: '#0066cc', color: 'white', border: 'none', borderRadius: '0.375rem', cursor: 'pointer'}}>
-                  Yönet
-                </button>
-              </div>
-              
-              <div style={{background: 'white', padding: '1.5rem', borderRadius: '0.5rem', textAlign: 'center'}}>
-                <div style={{fontSize: '3rem', marginBottom: '1rem'}}>👥</div>
-                <h3>Müvekkiller</h3>
-                <p style={{fontSize: '2rem', fontWeight: 'bold', color: '#0066cc'}}>67</p>
-                <button style={{marginTop: '1rem', padding: '0.5rem 1rem', background: '#0066cc', color: 'white', border: 'none', borderRadius: '0.375rem', cursor: 'pointer'}}>
-                  Yönet
-                </button>
-              </div>
-              
-              <div style={{background: 'white', padding: '1.5rem', borderRadius: '0.5rem', textAlign: 'center'}}>
-                <div style={{fontSize: '3rem', marginBottom: '1rem'}}>📄</div>
-                <h3>Belgeler</h3>
-                <p style={{fontSize: '2rem', fontWeight: 'bold', color: '#0066cc'}}>156</p>
-                <button style={{marginTop: '1rem', padding: '0.5rem 1rem', background: '#0066cc', color: 'white', border: 'none', borderRadius: '0.375rem', cursor: 'pointer'}}>
-                  Yönet
-                </button>
-              </div>
-
-              <div style={{background: 'white', padding: '1.5rem', borderRadius: '0.5rem', textAlign: 'center'}}>
-                <div style={{fontSize: '3rem', marginBottom: '1rem'}}>📅</div>
-                <h3>Takvim</h3>
-                <p style={{fontSize: '2rem', fontWeight: 'bold', color: '#0066cc'}}>8</p>
-                <button style={{marginTop: '1rem', padding: '0.5rem 1rem', background: '#0066cc', color: 'white', border: 'none', borderRadius: '0.375rem', cursor: 'pointer'}}>
-                  Yönet
-                </button>
-              </div>
-
-              <div style={{background: 'white', padding: '1.5rem', borderRadius: '0.5rem', textAlign: 'center'}}>
-                <div style={{fontSize: '3rem', marginBottom: '1rem'}}>💰</div>
-                <h3>Faturalama</h3>
-                <p style={{fontSize: '2rem', fontWeight: 'bold', color: '#0066cc'}}>₺45.6K</p>
-                <button style={{marginTop: '1rem', padding: '0.5rem 1rem', background: '#0066cc', color: 'white', border: 'none', borderRadius: '0.375rem', cursor: 'pointer'}}>
-                  Yönet
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeSection === 'files' && (
-          <div>
-            <h1 style={{fontSize: '2rem', marginBottom: '2rem'}}>Dosya Yönetimi</h1>
-            <div style={{background: 'white', padding: '2rem', borderRadius: '0.5rem'}}>
-              <button style={{
-                marginBottom: '2rem',
-                padding: '0.75rem 1.5rem',
+              <button onClick={() => updateSettings(settings)} style={{
+                padding: '0.75rem 2rem',
                 background: '#0066cc',
                 color: 'white',
                 border: 'none',
                 borderRadius: '0.375rem',
                 cursor: 'pointer'
               }}>
-                + Yeni Dosya Yükle
+                Kaydet
               </button>
-              
-              <table style={{width: '100%', borderCollapse: 'collapse'}}>
-                <thead>
-                  <tr style={{borderBottom: '2px solid #e5e7eb'}}>
-                    <th style={{padding: '0.75rem', textAlign: 'left'}}>Dosya Adı</th>
-                    <th style={{padding: '0.75rem', textAlign: 'left'}}>Boyut</th>
-                    <th style={{padding: '0.75rem', textAlign: 'left'}}>Tarih</th>
-                    <th style={{padding: '0.75rem', textAlign: 'left'}}>İşlemler</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr style={{borderBottom: '1px solid #e5e7eb'}}>
-                    <td style={{padding: '0.75rem'}}>📄 Vekalet.pdf</td>
-                    <td style={{padding: '0.75rem'}}>2.3 MB</td>
-                    <td style={{padding: '0.75rem'}}>01.09.2025</td>
-                    <td style={{padding: '0.75rem'}}>
-                      <button style={{marginRight: '0.5rem', color: '#0066cc', background: 'none', border: 'none', cursor: 'pointer'}}>İndir</button>
-                      <button style={{color: '#dc2626', background: 'none', border: 'none', cursor: 'pointer'}}>Sil</button>
-                    </td>
-                  </tr>
-                  <tr style={{borderBottom: '1px solid #e5e7eb'}}>
-                    <td style={{padding: '0.75rem'}}>📄 Dilekce.docx</td>
-                    <td style={{padding: '0.75rem'}}>156 KB</td>
-                    <td style={{padding: '0.75rem'}}>31.08.2025</td>
-                    <td style={{padding: '0.75rem'}}>
-                      <button style={{marginRight: '0.5rem', color: '#0066cc', background: 'none', border: 'none', cursor: 'pointer'}}>İndir</button>
-                      <button style={{color: '#dc2626', background: 'none', border: 'none', cursor: 'pointer'}}>Sil</button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
             </div>
           </div>
         )}
 
-        {activeSection === 'content' && (
+        {activeTab === 'features' && (
           <div>
-            <h1 style={{fontSize: '2rem', marginBottom: '2rem'}}>İçerik Yönetimi</h1>
-            <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem'}}>
-              <div style={{background: 'white', padding: '1.5rem', borderRadius: '0.5rem'}}>
-                <h3 style={{marginBottom: '1rem'}}>Ana Sayfa Hero</h3>
-                <p style={{color: '#6b7280', marginBottom: '1rem'}}>Ana sayfa başlık ve açıklama metinleri</p>
-                <button style={{
-                  padding: '0.5rem 1rem',
-                  background: '#0066cc',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '0.375rem',
-                  cursor: 'pointer'
-                }}>
-                  Düzenle
-                </button>
-              </div>
-              
-              <div style={{background: 'white', padding: '1.5rem', borderRadius: '0.5rem'}}>
-                <h3 style={{marginBottom: '1rem'}}>Özellikler</h3>
-                <p style={{color: '#6b7280', marginBottom: '1rem'}}>Özellikler bölümü içerikleri</p>
-                <button style={{
-                  padding: '0.5rem 1rem',
-                  background: '#0066cc',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '0.375rem',
-                  cursor: 'pointer'
-                }}>
-                  Düzenle
-                </button>
-              </div>
-
-              <div style={{background: 'white', padding: '1.5rem', borderRadius: '0.5rem'}}>
-                <h3 style={{marginBottom: '1rem'}}>Fiyatlandırma</h3>
-                <p style={{color: '#6b7280', marginBottom: '1rem'}}>Paket ve fiyat bilgileri</p>
-                <button style={{
-                  padding: '0.5rem 1rem',
-                  background: '#0066cc',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '0.375rem',
-                  cursor: 'pointer'
-                }}>
-                  Düzenle
-                </button>
-              </div>
-
-              <div style={{background: 'white', padding: '1.5rem', borderRadius: '0.5rem'}}>
-                <h3 style={{marginBottom: '1rem'}}>İletişim</h3>
-                <p style={{color: '#6b7280', marginBottom: '1rem'}}>İletişim bilgileri ve form</p>
-                <button style={{
-                  padding: '0.5rem 1rem',
-                  background: '#0066cc',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '0.375rem',
-                  cursor: 'pointer'
-                }}>
-                  Düzenle
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeSection === 'users' && (
-          <div>
-            <h1 style={{fontSize: '2rem', marginBottom: '2rem'}}>Kullanıcı Yönetimi</h1>
+            <h1 style={{fontSize: '2rem', marginBottom: '2rem'}}>Özellikler</h1>
             <button style={{
               marginBottom: '2rem',
               padding: '0.75rem 1.5rem',
@@ -555,51 +315,48 @@ export default function AdminDashboard() {
               borderRadius: '0.375rem',
               cursor: 'pointer'
             }}>
-              + Yeni Kullanıcı Ekle
+              + Yeni Özellik Ekle
             </button>
-            <div style={{background: 'white', borderRadius: '0.5rem', overflow: 'hidden'}}>
-              <table style={{width: '100%', borderCollapse: 'collapse'}}>
-                <thead>
-                  <tr style={{background: '#f9fafb', borderBottom: '1px solid #e5e7eb'}}>
-                    <th style={{padding: '1rem', textAlign: 'left'}}>Ad Soyad</th>
-                    <th style={{padding: '1rem', textAlign: 'left'}}>Email</th>
-                    <th style={{padding: '1rem', textAlign: 'left'}}>Rol</th>
-                    <th style={{padding: '1rem', textAlign: 'left'}}>Durum</th>
-                    <th style={{padding: '1rem', textAlign: 'left'}}>İşlemler</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr style={{borderBottom: '1px solid #e5e7eb'}}>
-                    <td style={{padding: '1rem'}}>Serhat Admin</td>
-                    <td style={{padding: '1rem'}}>serhat@avukatajanda.com</td>
-                    <td style={{padding: '1rem'}}><span style={{background: '#dbeafe', color: '#1e40af', padding: '0.25rem 0.5rem', borderRadius: '0.25rem', fontSize: '0.875rem'}}>Super Admin</span></td>
-                    <td style={{padding: '1rem'}}><span style={{color: '#10b981'}}>● Aktif</span></td>
-                    <td style={{padding: '1rem'}}>
-                      <button style={{marginRight: '0.5rem', color: '#0066cc', background: 'none', border: 'none', cursor: 'pointer'}}>Düzenle</button>
-                    </td>
-                  </tr>
-                  <tr style={{borderBottom: '1px solid #e5e7eb'}}>
-                    <td style={{padding: '1rem'}}>Ahmet Yılmaz</td>
-                    <td style={{padding: '1rem'}}>ahmet@example.com</td>
-                    <td style={{padding: '1rem'}}><span style={{background: '#fef3c7', color: '#92400e', padding: '0.25rem 0.5rem', borderRadius: '0.25rem', fontSize: '0.875rem'}}>Editor</span></td>
-                    <td style={{padding: '1rem'}}><span style={{color: '#10b981'}}>● Aktif</span></td>
-                    <td style={{padding: '1rem'}}>
-                      <button style={{marginRight: '0.5rem', color: '#0066cc', background: 'none', border: 'none', cursor: 'pointer'}}>Düzenle</button>
-                      <button style={{color: '#dc2626', background: 'none', border: 'none', cursor: 'pointer'}}>Sil</button>
-                    </td>
-                  </tr>
-                  <tr style={{borderBottom: '1px solid #e5e7eb'}}>
-                    <td style={{padding: '1rem'}}>Ayşe Demir</td>
-                    <td style={{padding: '1rem'}}>ayse@example.com</td>
-                    <td style={{padding: '1rem'}}><span style={{background: '#e0e7ff', color: '#3730a3', padding: '0.25rem 0.5rem', borderRadius: '0.25rem', fontSize: '0.875rem'}}>User</span></td>
-                    <td style={{padding: '1rem'}}><span style={{color: '#6b7280'}}>● Pasif</span></td>
-                    <td style={{padding: '1rem'}}>
-                      <button style={{marginRight: '0.5rem', color: '#0066cc', background: 'none', border: 'none', cursor: 'pointer'}}>Düzenle</button>
-                      <button style={{color: '#dc2626', background: 'none', border: 'none', cursor: 'pointer'}}>Sil</button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+            <div style={{display: 'grid', gap: '1rem'}}>
+              {features.map(feature => (
+                <div key={feature.id} style={{background: 'white', padding: '1.5rem', borderRadius: '0.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                  <div>
+                    <h3>{feature.icon} {feature.title}</h3>
+                    <p style={{color: '#6b7280'}}>{feature.description}</p>
+                  </div>
+                  <div>
+                    <button style={{marginRight: '0.5rem', padding: '0.5rem 1rem', background: '#0066cc', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer'}}>
+                      Düzenle
+                    </button>
+                    <button style={{padding: '0.5rem 1rem', background: '#dc2626', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer'}}>
+                      Sil
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'pricing' && (
+          <div>
+            <h1 style={{fontSize: '2rem', marginBottom: '2rem'}}>Fiyatlandırma Planları</h1>
+            <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem'}}>
+              {pricing.map(plan => (
+                <div key={plan.id} style={{background: 'white', padding: '1.5rem', borderRadius: '0.5rem', border: plan.is_popular ? '2px solid #0066cc' : '1px solid #e5e7eb'}}>
+                  {plan.is_popular && <span style={{background: '#0066cc', color: 'white', padding: '0.25rem 0.5rem', borderRadius: '4px', fontSize: '0.875rem'}}>Popüler</span>}
+                  <h3>{plan.name}</h3>
+                  <p style={{fontSize: '2rem', fontWeight: 'bold'}}>₺{plan.price}</p>
+                  <ul style={{listStyle: 'none', padding: 0}}>
+                    {plan.features?.map((f: string, i: number) => (
+                      <li key={i}>✓ {f}</li>
+                    ))}
+                  </ul>
+                  <button style={{width: '100%', marginTop: '1rem', padding: '0.5rem', background: '#0066cc', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer'}}>
+                    Düzenle
+                  </button>
+                </div>
+              ))}
             </div>
           </div>
         )}
