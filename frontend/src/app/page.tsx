@@ -1,3 +1,5 @@
+'use client';
+
 export default function HomePage() {
   return (
     <div style={{fontFamily: 'system-ui, -apple-system, sans-serif', minHeight: '100vh', background: 'white'}}>
@@ -16,36 +18,11 @@ export default function HomePage() {
               AvukatAjanda
             </h1>
             <div style={{display: 'flex', gap: '2rem', alignItems: 'center'}}>
-              <a href="#features" style={{color: '#64748b', textDecoration: 'none', transition: 'color 0.2s'}}
-                 onMouseEnter={(e) => e.currentTarget.style.color = '#0066cc'}
-                 onMouseLeave={(e) => e.currentTarget.style.color = '#64748b'}>
-                Özellikler
-              </a>
-              <a href="#pricing" style={{color: '#64748b', textDecoration: 'none', transition: 'color 0.2s'}}
-                 onMouseEnter={(e) => e.currentTarget.style.color = '#0066cc'}
-                 onMouseLeave={(e) => e.currentTarget.style.color = '#64748b'}>
-                Fiyatlandırma
-              </a>
-              <a href="#contact" style={{color: '#64748b', textDecoration: 'none', transition: 'color 0.2s'}}
-                 onMouseEnter={(e) => e.currentTarget.style.color = '#0066cc'}
-                 onMouseLeave={(e) => e.currentTarget.style.color = '#64748b'}>
-                İletişim
-              </a>
-              <a href="/login" style={{color: '#64748b', textDecoration: 'none', transition: 'color 0.2s'}}
-                 onMouseEnter={(e) => e.currentTarget.style.color = '#0066cc'}
-                 onMouseLeave={(e) => e.currentTarget.style.color = '#64748b'}>
-                Giriş
-              </a>
-              <a href="/login" style={{
-                background: '#0066cc',
-                color: 'white',
-                padding: '0.5rem 1.25rem',
-                borderRadius: '0.375rem',
-                textDecoration: 'none',
-                transition: 'background 0.2s'
-              }}
-                 onMouseEnter={(e) => e.currentTarget.style.background = '#0052cc'}
-                 onMouseLeave={(e) => e.currentTarget.style.background = '#0066cc'}>
+              <a href="#features" style={{color: '#64748b', textDecoration: 'none'}}>Özellikler</a>
+              <a href="#pricing" style={{color: '#64748b', textDecoration: 'none'}}>Fiyatlandırma</a>
+              <a href="#contact" style={{color: '#64748b', textDecoration: 'none'}}>İletişim</a>
+              <a href="/login" style={{color: '#64748b', textDecoration: 'none'}}>Giriş</a>
+              <a href="/login" style={{background: '#0066cc', color: 'white', padding: '0.5rem 1.25rem', borderRadius: '0.375rem', textDecoration: 'none'}}>
                 Ücretsiz Dene
               </a>
             </div>
