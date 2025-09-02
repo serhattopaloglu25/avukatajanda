@@ -1,20 +1,54 @@
 export default function HomePage() {
   return (
     <div style={{fontFamily: 'system-ui, -apple-system, sans-serif', minHeight: '100vh', background: 'white'}}>
-      {/* Navigation */}
-      <nav style={{background: 'white', borderBottom: '1px solid #e5e7eb', padding: '1rem 0'}}>
-        <div style={{maxWidth: '1200px', margin: '0 auto', padding: '0 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-          <h1 style={{fontSize: '1.5rem', fontWeight: 'bold', color: '#0066cc', margin: 0}}>
-            AvukatAjanda
-          </h1>
-          <div style={{display: 'flex', gap: '2rem', alignItems: 'center'}}>
-            <a href="#features" style={{color: '#64748b', textDecoration: 'none'}}>Özellikler</a>
-            <a href="#pricing" style={{color: '#64748b', textDecoration: 'none'}}>Fiyatlandırma</a>
-            <a href="#contact" style={{color: '#64748b', textDecoration: 'none'}}>İletişim</a>
-            <a href="/login" style={{color: '#64748b', textDecoration: 'none'}}>Giriş</a>
-            <a href="/login" style={{background: '#0066cc', color: 'white', padding: '0.5rem 1.25rem', borderRadius: '0.375rem', textDecoration: 'none'}}>
-              Ücretsiz Dene
-            </a>
+      {/* Sticky Navigation */}
+      <nav style={{
+        background: 'white',
+        borderBottom: '1px solid #e5e7eb',
+        position: 'sticky',
+        top: 0,
+        zIndex: 1000,
+        boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+      }}>
+        <div style={{maxWidth: '1200px', margin: '0 auto', padding: '0 1rem'}}>
+          <div style={{height: '72px', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+            <h1 style={{fontSize: '1.5rem', fontWeight: 'bold', color: '#0066cc', margin: 0}}>
+              AvukatAjanda
+            </h1>
+            <div style={{display: 'flex', gap: '2rem', alignItems: 'center'}}>
+              <a href="#features" style={{color: '#64748b', textDecoration: 'none', transition: 'color 0.2s'}}
+                 onMouseEnter={(e) => e.currentTarget.style.color = '#0066cc'}
+                 onMouseLeave={(e) => e.currentTarget.style.color = '#64748b'}>
+                Özellikler
+              </a>
+              <a href="#pricing" style={{color: '#64748b', textDecoration: 'none', transition: 'color 0.2s'}}
+                 onMouseEnter={(e) => e.currentTarget.style.color = '#0066cc'}
+                 onMouseLeave={(e) => e.currentTarget.style.color = '#64748b'}>
+                Fiyatlandırma
+              </a>
+              <a href="#contact" style={{color: '#64748b', textDecoration: 'none', transition: 'color 0.2s'}}
+                 onMouseEnter={(e) => e.currentTarget.style.color = '#0066cc'}
+                 onMouseLeave={(e) => e.currentTarget.style.color = '#64748b'}>
+                İletişim
+              </a>
+              <a href="/login" style={{color: '#64748b', textDecoration: 'none', transition: 'color 0.2s'}}
+                 onMouseEnter={(e) => e.currentTarget.style.color = '#0066cc'}
+                 onMouseLeave={(e) => e.currentTarget.style.color = '#64748b'}>
+                Giriş
+              </a>
+              <a href="/login" style={{
+                background: '#0066cc',
+                color: 'white',
+                padding: '0.5rem 1.25rem',
+                borderRadius: '0.375rem',
+                textDecoration: 'none',
+                transition: 'background 0.2s'
+              }}
+                 onMouseEnter={(e) => e.currentTarget.style.background = '#0052cc'}
+                 onMouseLeave={(e) => e.currentTarget.style.background = '#0066cc'}>
+                Ücretsiz Dene
+              </a>
+            </div>
           </div>
         </div>
       </nav>
@@ -40,7 +74,7 @@ export default function HomePage() {
       </section>
 
       {/* Features */}
-      <section id="features" style={{padding: '5rem 1rem'}}>
+      <section id="features" style={{padding: '5rem 1rem', scrollMarginTop: '72px'}}>
         <div style={{maxWidth: '1200px', margin: '0 auto'}}>
           <h2 style={{fontSize: '2.5rem', fontWeight: 'bold', textAlign: 'center', marginBottom: '3rem', color: '#1e293b'}}>
             Güçlü Özellikler
@@ -65,7 +99,7 @@ export default function HomePage() {
       </section>
 
       {/* Pricing */}
-      <section id="pricing" style={{padding: '5rem 1rem', background: '#f8fafc'}}>
+      <section id="pricing" style={{padding: '5rem 1rem', background: '#f8fafc', scrollMarginTop: '72px'}}>
         <div style={{maxWidth: '1200px', margin: '0 auto'}}>
           <h2 style={{fontSize: '2.5rem', fontWeight: 'bold', textAlign: 'center', marginBottom: '3rem', color: '#1e293b'}}>
             Fiyatlandırma
@@ -116,7 +150,7 @@ export default function HomePage() {
       </section>
 
       {/* Contact */}
-      <section id="contact" style={{padding: '5rem 1rem'}}>
+      <section id="contact" style={{padding: '5rem 1rem', scrollMarginTop: '72px'}}>
         <div style={{maxWidth: '800px', margin: '0 auto', textAlign: 'center'}}>
           <h2 style={{fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '3rem', color: '#1e293b'}}>
             İletişim
