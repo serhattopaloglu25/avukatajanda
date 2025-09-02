@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import AdminLayout from '../../components/admin/AdminLayout';
 
 export default function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -8,25 +9,22 @@ export default function AdminDashboard() {
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('dashboard');
   
-  // Site ayarları
-  const [settings, setSettings] = useState({
-    primary_color: '#0066cc',
-    secondary_color: '#64748b',
-    hero_title: 'Hukuk Büronuz İçin Komple Çözüm',
-    hero_subtitle: 'Bulut tabanlı hukuk bürosu yazılımı'
+  const [siteSettings, setSiteSettings] = useState({
+    primaryColor: '#0066cc',
+    secondaryColor: '#64748b',
+    heroTitle: 'Hukuk Büronuz İçin Komple Çözüm',
+    heroSubtitle: 'Bulut tabanlı hukuk bürosu yazılımı',
+    phone: '0850 123 45 67',
+    email: 'destek@avukatajanda.com',
+    address: 'Levent, İstanbul'
   });
 
   useEffect(() => {
-    // Auth kontrolü
     const token = localStorage.getItem('adminAuth');
     if (token === 'SerhatAdmin_authenticated') {
       setIsAuthenticated(true);
-    }
-    
-    // Kayıtlı ayarları yükle
-    const savedSettings = localStorage.getItem('siteSettings');
-    if (savedSettings) {
-      setSettings(JSON.parse(savedSettings));
+      const saved = localStorage.getItem('siteSettings');
+      if (saved) setSiteSettings(JSON.parse(saved));
     }
   }, []);
 
@@ -46,8 +44,8 @@ export default function AdminDashboard() {
   };
 
   const saveSettings = () => {
-    localStorage.setItem('siteSettings', JSON.stringify(settings));
-    alert('Ayarlar kaydedildi! Ana sayfayı yenileyin.');
+    localStorage.setItem('siteSettings', JSON.stringify(siteSettings));
+    alert('Ayarlar kaydedildi!');
   };
 
   if (!isAuthenticated) {
@@ -57,8 +55,7 @@ export default function AdminDashboard() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'linear-gradient(135deg, #667eea, #764ba2)',
-        fontFamily: 'system-ui'
+        background: 'linear-gradient(135deg, #667eea, #764ba2)'
       }}>
         <form onSubmit={handleLogin} style={{
           background: 'white',
@@ -113,108 +110,98 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div style={{display: 'flex', minHeight: '100vh', background: '#f3f4f6'}}>
-      {/* Sidebar */}
-      <div style={{width: '250px', background: '#1f2937', padding: '2rem 1rem', color: 'white'}}>
-        <h2>Admin Panel</h2>
-        <nav style={{marginTop: '2rem'}}>
-          <button
-            onClick={() => setActiveTab('settings')}
-            style={{
-              width: '100%',
-              padding: '0.75rem',
-              background: activeTab === 'settings' ? '#374151' : 'transparent',
-              border: 'none',
-              color: 'white',
-              textAlign: 'left',
-              borderRadius: '0.375rem',
-              cursor: 'pointer',
-              marginBottom: '0.5rem'
-            }}
-          >
-            Site Ayarları
-          </button>
-        </nav>
-        <button onClick={handleLogout} style={{
-          width: '100%',
-          marginTop: '2rem',
-          padding: '0.75rem',
-          background: '#dc2626',
-          border: 'none',
-          color: 'white',
-          borderRadius: '0.375rem',
-          cursor: 'pointer'
-        }}>
-          Çıkış Yap
-        </button>
-      </div>
-
-      {/* Content */}
-      <div style={{flex: 1, padding: '2rem'}}>
-        <h1>Site Ayarları</h1>
-        <div style={{background: 'white', padding: '2rem', borderRadius: '0.5rem', marginTop: '2rem'}}>
-          <div style={{marginBottom: '1.5rem'}}>
-            <label style={{display: 'block', marginBottom: '0.5rem'}}>Ana Renk</label>
-            <input
-              type="color"
-              value={settings.primary_color}
-              onChange={(e) => setSettings({...settings, primary_color: e.target.value})}
-              style={{width: '100px', height: '40px'}}
-            />
+    <AdminLayout activeTab={activeTab} setActiveTab={setActiveTab} onLogout={handleLogout}>
+      {activeTab === 'dashboard' && (
+        <div>
+          <h1 style={{fontSize: '2rem', marginBottom: '2rem'}}>Dashboard</h1>
+          <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem'}}>
+            <div style={{background: 'white', padding: '1.5rem', borderRadius: '0.5rem'}}>
+              <h3>Toplam Kullanıcı</h3>
+              <p style={{fontSize: '2rem', fontWeight: 'bold'}}>156</p>
+            </div>
+            <div style={{background: 'white', padding: '1.5rem', borderRadius: '0.5rem'}}>
+              <h3>Aktif Abonelik</h3>
+              <p style={{fontSize: '2rem', fontWeight: 'bold'}}>89</p>
+            </div>
+            <div style={{background: 'white', padding: '1.5rem', borderRadius: '0.5rem'}}>
+              <h3>Aylık Gelir</h3>
+              <p style={{fontSize: '2rem', fontWeight: 'bold'}}>₺67,400</p>
+            </div>
           </div>
-          
-          <div style={{marginBottom: '1.5rem'}}>
-            <label style={{display: 'block', marginBottom: '0.5rem'}}>İkincil Renk</label>
-            <input
-              type="color"
-              value={settings.secondary_color}
-              onChange={(e) => setSettings({...settings, secondary_color: e.target.value})}
-              style={{width: '100px', height: '40px'}}
-            />
-          </div>
-
-          <div style={{marginBottom: '1.5rem'}}>
-            <label style={{display: 'block', marginBottom: '0.5rem'}}>Ana Başlık</label>
-            <input
-              type="text"
-              value={settings.hero_title}
-              onChange={(e) => setSettings({...settings, hero_title: e.target.value})}
-              style={{
-                width: '100%',
-                padding: '0.75rem',
-                border: '1px solid #e5e7eb',
-                borderRadius: '0.375rem'
-              }}
-            />
-          </div>
-
-          <div style={{marginBottom: '1.5rem'}}>
-            <label style={{display: 'block', marginBottom: '0.5rem'}}>Alt Başlık</label>
-            <input
-              type="text"
-              value={settings.hero_subtitle}
-              onChange={(e) => setSettings({...settings, hero_subtitle: e.target.value})}
-              style={{
-                width: '100%',
-                padding: '0.75rem',
-                border: '1px solid #e5e7eb',
-                borderRadius: '0.375rem'
-              }}
-            />
-          </div>
-
-          <button onClick={saveSettings} style={{
-            padding: '0.75rem 2rem',
-            background: '#0066cc',
-            color: 'white',
-            border: 'none',
-            borderRadius: '0.375rem',
-            cursor: 'pointer'
-          }}>
-            Kaydet
-          </button>
         </div>
-      </div>
-    </div>
+      )}
+
+      {activeTab === 'settings' && (
+        <div>
+          <h1 style={{fontSize: '2rem', marginBottom: '2rem'}}>Site Ayarları</h1>
+          <div style={{background: 'white', padding: '2rem', borderRadius: '0.5rem'}}>
+            <div style={{marginBottom: '1.5rem'}}>
+              <label>Ana Renk</label>
+              <input
+                type="color"
+                value={siteSettings.primaryColor}
+                onChange={(e) => setSiteSettings({...siteSettings, primaryColor: e.target.value})}
+                style={{display: 'block', marginTop: '0.5rem', width: '100px', height: '40px'}}
+              />
+            </div>
+            <div style={{marginBottom: '1.5rem'}}>
+              <label>Hero Başlık</label>
+              <input
+                type="text"
+                value={siteSettings.heroTitle}
+                onChange={(e) => setSiteSettings({...siteSettings, heroTitle: e.target.value})}
+                style={{width: '100%', padding: '0.5rem', marginTop: '0.5rem', border: '1px solid #ddd', borderRadius: '4px'}}
+              />
+            </div>
+            <button onClick={saveSettings} style={{
+              padding: '0.75rem 2rem',
+              background: '#0066cc',
+              color: 'white',
+              border: 'none',
+              borderRadius: '0.375rem',
+              cursor: 'pointer'
+            }}>
+              Kaydet
+            </button>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'contact' && (
+        <div>
+          <h1 style={{fontSize: '2rem', marginBottom: '2rem'}}>İletişim Bilgileri</h1>
+          <div style={{background: 'white', padding: '2rem', borderRadius: '0.5rem'}}>
+            <div style={{marginBottom: '1.5rem'}}>
+              <label>Telefon</label>
+              <input
+                type="text"
+                value={siteSettings.phone}
+                onChange={(e) => setSiteSettings({...siteSettings, phone: e.target.value})}
+                style={{width: '100%', padding: '0.5rem', marginTop: '0.5rem', border: '1px solid #ddd', borderRadius: '4px'}}
+              />
+            </div>
+            <div style={{marginBottom: '1.5rem'}}>
+              <label>E-posta</label>
+              <input
+                type="email"
+                value={siteSettings.email}
+                onChange={(e) => setSiteSettings({...siteSettings, email: e.target.value})}
+                style={{width: '100%', padding: '0.5rem', marginTop: '0.5rem', border: '1px solid #ddd', borderRadius: '4px'}}
+              />
+            </div>
+            <button onClick={saveSettings} style={{
+              padding: '0.75rem 2rem',
+              background: '#0066cc',
+              color: 'white',
+              border: 'none',
+              borderRadius: '0.375rem',
+              cursor: 'pointer'
+            }}>
+              Kaydet
+            </button>
+          </div>
+        </div>
+      )}
+    </AdminLayout>
   );
 }
