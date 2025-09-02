@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function HomePage() {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -14,6 +15,7 @@ export default function HomePage() {
     confirmPassword: '',
     phone: ''
   });
+  const router = useRouter();
 
   const settings = {
     primaryColor: '#0066cc',
@@ -24,20 +26,29 @@ export default function HomePage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (userType === 'lawyer' && loginData.email && loginData.password) {
-      localStorage.setItem('lawyerAuth', JSON.stringify({
-        email: loginData.email,
-        name: 'Avukat Kullanıcı',
-        role: 'lawyer'
-      }));
-      window.location.href = '/dashboard';
-    } else if (userType === 'client' && loginData.email && loginData.password) {
-      localStorage.setItem('clientAuth', JSON.stringify({
-        email: loginData.email,
-        name: 'Müvekkil Kullanıcı',
-        role: 'client'
-      }));
-      window.location.href = '/client-dashboard';
+    
+    // Kayıtlı kullanıcıları kontrol et
+    const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+    const user = users.find((u: any) => u.email === loginData.email && u.password === loginData.password && u.type === userType);
+    
+    if (user) {
+      if (userType === 'lawyer') {
+        localStorage.setItem('lawyerAuth', JSON.stringify({
+          email: user.email,
+          name: user.name,
+          role: 'lawyer'
+        }));
+        router.push('/dashboard');
+      } else {
+        localStorage.setItem('clientAuth', JSON.stringify({
+          email: user.email,
+          name: user.name,
+          role: 'client'
+        }));
+        router.push('/client-dashboard');
+      }
+    } else {
+      alert('Geçersiz e-posta veya şifre!');
     }
   };
 
@@ -47,10 +58,27 @@ export default function HomePage() {
       alert('Şifreler eşleşmiyor!');
       return;
     }
-    // Kayıt işlemi simülasyonu
+    
+    // Kullanıcıyı kaydet
+    const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+    const newUser = {
+      name: registerData.name,
+      email: registerData.email,
+      password: registerData.password,
+      phone: registerData.phone,
+      type: userType
+    };
+    users.push(newUser);
+    localStorage.setItem('registeredUsers', JSON.stringify(users));
+    
     alert('Kayıt başarılı! Giriş yapabilirsiniz.');
+    setRegisterData({ name: '', email: '', password: '', confirmPassword: '', phone: '' });
     setShowRegisterModal(false);
     setShowLoginModal(true);
+  };
+
+  const handleSocialLogin = (provider: string) => {
+    alert(`${provider} ile giriş özelliği yakında eklenecek!`);
   };
 
   return (
@@ -111,7 +139,7 @@ export default function HomePage() {
               </form>
 
               <div style={{marginBottom: '1rem'}}>
-                <button style={{
+                <button onClick={() => handleSocialLogin('Google')} style={{
                   width: '100%', padding: '0.875rem', background: 'white', color: '#333',
                   border: '1px solid #e5e7eb', borderRadius: '0.5rem', fontSize: '1rem', cursor: 'pointer',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.5rem'
@@ -119,7 +147,7 @@ export default function HomePage() {
                   <img src="https://www.google.com/favicon.ico" alt="Google" style={{width: '20px', height: '20px'}} />
                   Google ile Giriş Yap
                 </button>
-                <button style={{
+                <button onClick={() => handleSocialLogin('Apple')} style={{
                   width: '100%', padding: '0.875rem', background: 'black', color: 'white',
                   border: 'none', borderRadius: '0.5rem', fontSize: '1rem', cursor: 'pointer',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem'
@@ -132,7 +160,7 @@ export default function HomePage() {
                 Hesabın yok mu? 
                 <button onClick={() => {setShowLoginModal(false); setShowRegisterModal(true);}} 
                   style={{color: settings.primaryColor, background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600'}}>
-                  Üye Ol
+                  {' '}Üye Ol
                 </button>
               </p>
             </div>
@@ -193,7 +221,7 @@ export default function HomePage() {
                 Zaten hesabın var mı? 
                 <button onClick={() => {setShowRegisterModal(false); setShowLoginModal(true);}} 
                   style={{color: settings.primaryColor, background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600'}}>
-                  Giriş Yap
+                  {' '}Giriş Yap
                 </button>
               </p>
             </div>
@@ -201,7 +229,7 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* Navigation */}
+      {/* Navigation ve diğer bölümler aynı kalacak... */}
       <nav style={{
         background: 'white',
         borderBottom: '1px solid #e5e7eb',
@@ -252,35 +280,8 @@ export default function HomePage() {
           <p style={{fontSize: '1.25rem', color: settings.secondaryColor, maxWidth: '800px', margin: '0 auto 3rem'}}>
             {settings.heroSubtitle}
           </p>
-          <div style={{display: 'flex', gap: '1rem', justifyContent: 'center'}}>
-            <button onClick={() => setShowRegisterModal(true)} style={{
-              background: settings.primaryColor,
-              color: 'white',
-              padding: '0.875rem 2rem',
-              borderRadius: '0.5rem',
-              border: 'none',
-              fontSize: '1.125rem',
-              cursor: 'pointer',
-              fontWeight: '600'
-            }}>
-              14 Gün Ücretsiz Dene
-            </button>
-            <button style={{
-              border: `2px solid #e5e7eb`,
-              padding: '0.875rem 2rem',
-              borderRadius: '0.5rem',
-              background: 'white',
-              color: settings.secondaryColor,
-              fontSize: '1.125rem',
-              cursor: 'pointer'
-            }}>
-              Demo Talep Et
-            </button>
-          </div>
         </div>
       </section>
-
-      {/* Features - Pricing - Contact sections... */}
     </div>
   );
 }
