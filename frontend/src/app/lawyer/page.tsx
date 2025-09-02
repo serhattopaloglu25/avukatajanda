@@ -2,15 +2,30 @@
 
 import { useState, useEffect } from 'react';
 
+interface Hearing {
+  id: number;
+  case: string;
+  date: string;
+  time: string;
+  court: string;
+}
+
+interface Stats {
+  total_cases: number;
+  active_cases: number;
+  total_clients: number;
+  pending_invoices: number;
+}
+
 export default function LawyerDashboard() {
-  const [stats, setStats] = useState({
+  const [stats, setStats] = useState<Stats>({
     total_cases: 0,
     active_cases: 0,
     total_clients: 0,
     pending_invoices: 0
   });
 
-  const [upcomingHearings, setUpcomingHearings] = useState([]);
+  const [upcomingHearings, setUpcomingHearings] = useState<Hearing[]>([]);
 
   useEffect(() => {
     // Demo veriler
@@ -64,7 +79,7 @@ export default function LawyerDashboard() {
             </tr>
           </thead>
           <tbody>
-            {upcomingHearings.map((hearing: any) => (
+            {upcomingHearings.map((hearing) => (
               <tr key={hearing.id} style={{borderBottom: '1px solid #e5e7eb'}}>
                 <td style={{padding: '0.75rem'}}>{hearing.case}</td>
                 <td style={{padding: '0.75rem'}}>{hearing.date}</td>
