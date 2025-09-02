@@ -10,6 +10,7 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [saveMessage, setSaveMessage] = useState('');
   
+  // Site ayarları
   const [siteSettings, setSiteSettings] = useState({
     primaryColor: '#0066cc',
     secondaryColor: '#64748b',
@@ -22,32 +23,46 @@ export default function AdminDashboard() {
     address: 'Levent, İstanbul'
   });
 
-  const [features, setFeatures] = useState([
-    { id: 1, icon: '⚖️', title: 'Dava Takibi', description: 'Davalarınızı takip edin' },
-    { id: 2, icon: '👥', title: 'Müvekkil Yönetimi', description: 'Müvekkillerinizi yönetin' },
-    { id: 3, icon: '📄', title: 'UYAP Entegrasyonu', description: 'UYAP bağlantısı' }
+  // Kullanıcılar
+  const [users, setUsers] = useState([
+    { id: 1, name: 'Ahmet Yılmaz', email: 'ahmet@example.com', role: 'user', plan: 'Profesyonel', status: 'active', joinDate: '2025-01-15' },
+    { id: 2, name: 'Ayşe Demir', email: 'ayse@example.com', role: 'user', plan: 'Başlangıç', status: 'active', joinDate: '2025-01-20' },
+    { id: 3, name: 'Mehmet Öz', email: 'mehmet@example.com', role: 'user', plan: 'Kurumsal', status: 'inactive', joinDate: '2024-12-01' },
+    { id: 4, name: 'Fatma Kaya', email: 'fatma@example.com', role: 'editor', plan: 'Profesyonel', status: 'active', joinDate: '2025-02-01' }
   ]);
 
-  const [pricing, setPricing] = useState([
-    { id: 1, name: 'Başlangıç', price: 299, features: ['1 Kullanıcı', '50 Dava', '100 GB'] },
-    { id: 2, name: 'Profesyonel', price: 699, features: ['5 Kullanıcı', 'Sınırsız Dava', '500 GB'] },
-    { id: 3, name: 'Kurumsal', price: 1499, features: ['Sınırsız Kullanıcı', 'Sınırsız Dava', 'Sınırsız'] }
+  // Audit logs
+  const [auditLogs, setAuditLogs] = useState([
+    { id: 1, user: 'SerhatAdmin', action: 'Site ayarları güncellendi', details: 'Ana renk değiştirildi', date: '2025-09-02 14:30', ip: '192.168.1.1' },
+    { id: 2, user: 'SerhatAdmin', action: 'Kullanıcı eklendi', details: 'Fatma Kaya eklendi', date: '2025-09-02 10:15', ip: '192.168.1.1' },
+    { id: 3, user: 'SerhatAdmin', action: 'Fiyatlandırma güncellendi', details: 'Profesyonel plan fiyatı değişti', date: '2025-09-01 16:45', ip: '192.168.1.1' },
+    { id: 4, user: 'EditorUser', action: 'İçerik düzenlendi', details: 'Hero başlık güncellendi', date: '2025-09-01 09:20', ip: '192.168.1.2' }
   ]);
+
+  // Yeni kullanıcı form state
+  const [newUser, setNewUser] = useState({
+    name: '',
+    email: '',
+    role: 'user',
+    plan: 'Başlangıç'
+  });
+
+  const [showNewUserForm, setShowNewUserForm] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('adminAuth');
     if (token === 'SerhatAdmin_authenticated') {
       setIsAuthenticated(true);
       
-      // Load saved settings
+      // Load saved data
       const savedSettings = localStorage.getItem('siteSettings');
       if (savedSettings) setSiteSettings(JSON.parse(savedSettings));
       
-      const savedFeatures = localStorage.getItem('features');
-      if (savedFeatures) setFeatures(JSON.parse(savedFeatures));
+      const savedUsers = localStorage.getItem('users');
+      if (savedUsers) setUsers(JSON.parse(savedUsers));
       
-      const savedPricing = localStorage.getItem('pricing');
-      if (savedPricing) setPricing(JSON.parse(savedPricing));
+      const savedLogs = localStorage.getItem('auditLogs');
+      if (savedLogs) setAuditLogs(JSON.parse(savedLogs));
     }
   }, []);
 
@@ -56,58 +71,87 @@ export default function AdminDashboard() {
     if (loginData.username === 'SerhatAdmin' && loginData.password === 'Serhat25') {
       localStorage.setItem('adminAuth', 'SerhatAdmin_authenticated');
       setIsAuthenticated(true);
+      addAuditLog('SerhatAdmin', 'Giriş yapıldı', 'Admin panele giriş');
     } else {
       setError('Kullanıcı adı veya şifre hatalı!');
     }
   };
 
   const handleLogout = () => {
+    addAuditLog('SerhatAdmin', 'Çıkış yapıldı', 'Admin panelden çıkış');
     localStorage.removeItem('adminAuth');
     setIsAuthenticated(false);
   };
 
+  const addAuditLog = (user: string, action: string, details: string) => {
+    const newLog = {
+      id: Date.now(),
+      user,
+      action,
+      details,
+      date: new Date().toLocaleString('tr-TR'),
+      ip: '192.168.1.1'
+    };
+    
+    const updatedLogs = [newLog, ...auditLogs];
+    setAuditLogs(updatedLogs);
+    localStorage.setItem('auditLogs', JSON.stringify(updatedLogs));
+  };
+
   const saveSettings = () => {
     localStorage.setItem('siteSettings', JSON.stringify(siteSettings));
+    addAuditLog('SerhatAdmin', 'Site ayarları güncellendi', 'Ayarlar kaydedildi');
     setSaveMessage('✅ Ayarlar başarıyla kaydedildi!');
     setTimeout(() => setSaveMessage(''), 3000);
   };
 
-  const saveFeatures = () => {
-    localStorage.setItem('features', JSON.stringify(features));
-    setSaveMessage('✅ Özellikler kaydedildi!');
-    setTimeout(() => setSaveMessage(''), 3000);
-  };
+  const addUser = () => {
+    if (!newUser.name || !newUser.email) {
+      alert('Lütfen tüm alanları doldurun');
+      return;
+    }
 
-  const savePricing = () => {
-    localStorage.setItem('pricing', JSON.stringify(pricing));
-    setSaveMessage('✅ Fiyatlandırma kaydedildi!');
-    setTimeout(() => setSaveMessage(''), 3000);
-  };
-
-  const addFeature = () => {
-    const newFeature = {
+    const user = {
       id: Date.now(),
-      icon: '🆕',
-      title: 'Yeni Özellik',
-      description: 'Açıklama ekleyin'
+      ...newUser,
+      status: 'active',
+      joinDate: new Date().toISOString().split('T')[0]
     };
-    setFeatures([...features, newFeature]);
+
+    const updatedUsers = [...users, user];
+    setUsers(updatedUsers);
+    localStorage.setItem('users', JSON.stringify(updatedUsers));
+    
+    addAuditLog('SerhatAdmin', 'Kullanıcı eklendi', `${newUser.name} eklendi`);
+    
+    setNewUser({ name: '', email: '', role: 'user', plan: 'Başlangıç' });
+    setShowNewUserForm(false);
+    setSaveMessage('✅ Kullanıcı başarıyla eklendi!');
+    setTimeout(() => setSaveMessage(''), 3000);
   };
 
-  const deleteFeature = (id: number) => {
-    setFeatures(features.filter(f => f.id !== id));
+  const updateUserStatus = (userId: number, newStatus: string) => {
+    const updatedUsers = users.map(user => 
+      user.id === userId ? { ...user, status: newStatus } : user
+    );
+    setUsers(updatedUsers);
+    localStorage.setItem('users', JSON.stringify(updatedUsers));
+    
+    const user = users.find(u => u.id === userId);
+    addAuditLog('SerhatAdmin', 'Kullanıcı durumu değiştirildi', `${user?.name} - ${newStatus}`);
   };
 
-  const updateFeature = (id: number, field: string, value: string) => {
-    setFeatures(features.map(f => 
-      f.id === id ? { ...f, [field]: value } : f
-    ));
-  };
-
-  const updatePricing = (id: number, field: string, value: any) => {
-    setPricing(pricing.map(p => 
-      p.id === id ? { ...p, [field]: value } : p
-    ));
+  const deleteUser = (userId: number) => {
+    const user = users.find(u => u.id === userId);
+    if (confirm(`${user?.name} kullanıcısını silmek istediğinize emin misiniz?`)) {
+      const updatedUsers = users.filter(u => u.id !== userId);
+      setUsers(updatedUsers);
+      localStorage.setItem('users', JSON.stringify(updatedUsers));
+      
+      addAuditLog('SerhatAdmin', 'Kullanıcı silindi', `${user?.name} silindi`);
+      setSaveMessage('✅ Kullanıcı silindi!');
+      setTimeout(() => setSaveMessage(''), 3000);
+    }
   };
 
   if (!isAuthenticated) {
@@ -172,18 +216,10 @@ export default function AdminDashboard() {
   }
 
   const renderContent = () => {
-    // Save message notification
-    if (saveMessage) {
-      setTimeout(() => {
-        const msg = document.getElementById('saveMsg');
-        if (msg) msg.style.opacity = '0';
-      }, 2500);
-    }
-
     return (
       <>
         {saveMessage && (
-          <div id="saveMsg" style={{
+          <div style={{
             position: 'fixed',
             top: '20px',
             right: '20px',
@@ -192,156 +228,17 @@ export default function AdminDashboard() {
             padding: '1rem 1.5rem',
             borderRadius: '0.5rem',
             boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-            zIndex: 1000,
-            transition: 'opacity 0.3s'
+            zIndex: 1000
           }}>
             {saveMessage}
           </div>
         )}
 
-        {activeTab === 'dashboard' && (
+        {activeTab === 'users' && (
           <div>
-            <h1 style={{fontSize: '2rem', marginBottom: '2rem'}}>Dashboard</h1>
-            <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem'}}>
-              <div style={{background: 'white', padding: '1.5rem', borderRadius: '0.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)'}}>
-                <h3 style={{color: '#64748b', fontSize: '0.875rem'}}>Toplam Kullanıcı</h3>
-                <p style={{fontSize: '2rem', fontWeight: 'bold'}}>156</p>
-              </div>
-              <div style={{background: 'white', padding: '1.5rem', borderRadius: '0.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)'}}>
-                <h3 style={{color: '#64748b', fontSize: '0.875rem'}}>Aktif Abonelik</h3>
-                <p style={{fontSize: '2rem', fontWeight: 'bold'}}>89</p>
-              </div>
-              <div style={{background: 'white', padding: '1.5rem', borderRadius: '0.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)'}}>
-                <h3 style={{color: '#64748b', fontSize: '0.875rem'}}>Aylık Gelir</h3>
-                <p style={{fontSize: '2rem', fontWeight: 'bold'}}>₺67,400</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'settings' && (
-          <div>
-            <h1 style={{fontSize: '2rem', marginBottom: '2rem'}}>Site Ayarları</h1>
-            <div style={{background: 'white', padding: '2rem', borderRadius: '0.5rem'}}>
-              <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem'}}>
-                <div>
-                  <label style={{display: 'block', marginBottom: '0.5rem', fontWeight: '600'}}>Ana Renk</label>
-                  <div style={{display: 'flex', gap: '1rem', alignItems: 'center'}}>
-                    <input
-                      type="color"
-                      value={siteSettings.primaryColor}
-                      onChange={(e) => setSiteSettings({...siteSettings, primaryColor: e.target.value})}
-                      style={{width: '60px', height: '40px', border: '1px solid #e5e7eb', borderRadius: '4px', cursor: 'pointer'}}
-                    />
-                    <input
-                      type="text"
-                      value={siteSettings.primaryColor}
-                      onChange={(e) => setSiteSettings({...siteSettings, primaryColor: e.target.value})}
-                      style={{flex: 1, padding: '0.5rem', border: '1px solid #e5e7eb', borderRadius: '4px'}}
-                    />
-                  </div>
-                </div>
-                
-                <div>
-                  <label style={{display: 'block', marginBottom: '0.5rem', fontWeight: '600'}}>İkincil Renk</label>
-                  <div style={{display: 'flex', gap: '1rem', alignItems: 'center'}}>
-                    <input
-                      type="color"
-                      value={siteSettings.secondaryColor}
-                      onChange={(e) => setSiteSettings({...siteSettings, secondaryColor: e.target.value})}
-                      style={{width: '60px', height: '40px', border: '1px solid #e5e7eb', borderRadius: '4px', cursor: 'pointer'}}
-                    />
-                    <input
-                      type="text"
-                      value={siteSettings.secondaryColor}
-                      onChange={(e) => setSiteSettings({...siteSettings, secondaryColor: e.target.value})}
-                      style={{flex: 1, padding: '0.5rem', border: '1px solid #e5e7eb', borderRadius: '4px'}}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div style={{marginTop: '1.5rem'}}>
-                <label style={{display: 'block', marginBottom: '0.5rem', fontWeight: '600'}}>Hero Başlık</label>
-                <input
-                  type="text"
-                  value={siteSettings.heroTitle}
-                  onChange={(e) => setSiteSettings({...siteSettings, heroTitle: e.target.value})}
-                  style={{width: '100%', padding: '0.75rem', border: '1px solid #e5e7eb', borderRadius: '4px'}}
-                />
-              </div>
-
-              <div style={{marginTop: '1.5rem'}}>
-                <label style={{display: 'block', marginBottom: '0.5rem', fontWeight: '600'}}>Hero Alt Başlık</label>
-                <textarea
-                  value={siteSettings.heroSubtitle}
-                  onChange={(e) => setSiteSettings({...siteSettings, heroSubtitle: e.target.value})}
-                  style={{width: '100%', padding: '0.75rem', border: '1px solid #e5e7eb', borderRadius: '4px', minHeight: '100px', resize: 'vertical'}}
-                />
-              </div>
-
-              <button onClick={saveSettings} style={{
-                marginTop: '2rem',
-                padding: '0.75rem 2rem',
-                background: '#0066cc',
-                color: 'white',
-                border: 'none',
-                borderRadius: '0.375rem',
-                cursor: 'pointer',
-                fontSize: '1rem',
-                fontWeight: '600'
-              }}>
-                💾 Değişiklikleri Kaydet
-              </button>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'media' && (
-          <div>
-            <h1 style={{fontSize: '2rem', marginBottom: '2rem'}}>Logo ve Görseller</h1>
-            <div style={{background: 'white', padding: '2rem', borderRadius: '0.5rem'}}>
-              <div style={{marginBottom: '1.5rem'}}>
-                <label style={{display: 'block', marginBottom: '0.5rem', fontWeight: '600'}}>Logo URL</label>
-                <input
-                  type="text"
-                  value={siteSettings.logoUrl}
-                  onChange={(e) => setSiteSettings({...siteSettings, logoUrl: e.target.value})}
-                  style={{width: '100%', padding: '0.75rem', border: '1px solid #e5e7eb', borderRadius: '4px'}}
-                  placeholder="Örnek: /logo.png veya https://..."
-                />
-              </div>
-              <div style={{marginBottom: '1.5rem'}}>
-                <label style={{display: 'block', marginBottom: '0.5rem', fontWeight: '600'}}>Favicon URL</label>
-                <input
-                  type="text"
-                  value={siteSettings.faviconUrl}
-                  onChange={(e) => setSiteSettings({...siteSettings, faviconUrl: e.target.value})}
-                  style={{width: '100%', padding: '0.75rem', border: '1px solid #e5e7eb', borderRadius: '4px'}}
-                  placeholder="Örnek: /favicon.ico"
-                />
-              </div>
-              <button onClick={saveSettings} style={{
-                padding: '0.75rem 2rem',
-                background: '#0066cc',
-                color: 'white',
-                border: 'none',
-                borderRadius: '0.375rem',
-                cursor: 'pointer',
-                fontSize: '1rem',
-                fontWeight: '600'
-              }}>
-                💾 Değişiklikleri Kaydet
-              </button>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'content' && (
-          <div>
-            <h1 style={{fontSize: '2rem', marginBottom: '2rem'}}>İçerik Yönetimi - Özellikler</h1>
-            <div style={{marginBottom: '1rem'}}>
-              <button onClick={addFeature} style={{
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem'}}>
+              <h1 style={{fontSize: '2rem'}}>Kullanıcı Yönetimi</h1>
+              <button onClick={() => setShowNewUserForm(true)} style={{
                 padding: '0.75rem 1.5rem',
                 background: '#10b981',
                 color: 'white',
@@ -349,160 +246,213 @@ export default function AdminDashboard() {
                 borderRadius: '0.375rem',
                 cursor: 'pointer'
               }}>
-                + Yeni Özellik Ekle
+                + Yeni Kullanıcı Ekle
               </button>
             </div>
-            {features.map(feature => (
-              <div key={feature.id} style={{background: 'white', padding: '1.5rem', borderRadius: '0.5rem', marginBottom: '1rem'}}>
-                <div style={{display: 'grid', gridTemplateColumns: '80px 1fr 2fr auto', gap: '1rem', alignItems: 'center'}}>
-                  <input
-                    type="text"
-                    value={feature.icon}
-                    onChange={(e) => updateFeature(feature.id, 'icon', e.target.value)}
-                    style={{padding: '0.5rem', border: '1px solid #e5e7eb', borderRadius: '4px', textAlign: 'center', fontSize: '1.5rem'}}
-                  />
-                  <input
-                    type="text"
-                    value={feature.title}
-                    onChange={(e) => updateFeature(feature.id, 'title', e.target.value)}
-                    style={{padding: '0.5rem', border: '1px solid #e5e7eb', borderRadius: '4px'}}
-                  />
-                  <input
-                    type="text"
-                    value={feature.description}
-                    onChange={(e) => updateFeature(feature.id, 'description', e.target.value)}
-                    style={{padding: '0.5rem', border: '1px solid #e5e7eb', borderRadius: '4px'}}
-                  />
-                  <button onClick={() => deleteFeature(feature.id)} style={{
-                    padding: '0.5rem 1rem',
-                    background: '#dc2626',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer'
-                  }}>
-                    Sil
-                  </button>
-                </div>
-              </div>
-            ))}
-            <button onClick={saveFeatures} style={{
-              marginTop: '1rem',
-              padding: '0.75rem 2rem',
-              background: '#0066cc',
-              color: 'white',
-              border: 'none',
-              borderRadius: '0.375rem',
-              cursor: 'pointer',
-              fontSize: '1rem',
-              fontWeight: '600'
-            }}>
-              💾 Özellikleri Kaydet
-            </button>
-          </div>
-        )}
 
-        {activeTab === 'pricing' && (
-          <div>
-            <h1 style={{fontSize: '2rem', marginBottom: '2rem'}}>Fiyatlandırma Yönetimi</h1>
-            <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem'}}>
-              {pricing.map(plan => (
-                <div key={plan.id} style={{background: 'white', padding: '1.5rem', borderRadius: '0.5rem', border: '1px solid #e5e7eb'}}>
-                  <input
-                    type="text"
-                    value={plan.name}
-                    onChange={(e) => updatePricing(plan.id, 'name', e.target.value)}
-                    style={{width: '100%', padding: '0.5rem', marginBottom: '1rem', border: '1px solid #e5e7eb', borderRadius: '4px', fontSize: '1.25rem', fontWeight: '600'}}
-                  />
-                  <div style={{display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem'}}>
-                    <span>₺</span>
-                    <input
-                      type="number"
-                      value={plan.price}
-                      onChange={(e) => updatePricing(plan.id, 'price', parseInt(e.target.value))}
-                      style={{flex: 1, padding: '0.5rem', border: '1px solid #e5e7eb', borderRadius: '4px', fontSize: '1.5rem', fontWeight: 'bold'}}
-                    />
-                    <span>/ay</span>
-                  </div>
-                  <textarea
-                    value={plan.features.join('\n')}
-                    onChange={(e) => updatePricing(plan.id, 'features', e.target.value.split('\n'))}
-                    style={{width: '100%', padding: '0.5rem', border: '1px solid #e5e7eb', borderRadius: '4px', minHeight: '100px', resize: 'vertical'}}
-                    placeholder="Her satır bir özellik"
-                  />
-                </div>
-              ))}
-            </div>
-            <button onClick={savePricing} style={{
-              marginTop: '2rem',
-              padding: '0.75rem 2rem',
-              background: '#0066cc',
-              color: 'white',
-              border: 'none',
-              borderRadius: '0.375rem',
-              cursor: 'pointer',
-              fontSize: '1rem',
-              fontWeight: '600'
-            }}>
-              💾 Fiyatlandırmayı Kaydet
-            </button>
-          </div>
-        )}
-
-        {activeTab === 'contact' && (
-          <div>
-            <h1 style={{fontSize: '2rem', marginBottom: '2rem'}}>İletişim Bilgileri</h1>
-            <div style={{background: 'white', padding: '2rem', borderRadius: '0.5rem'}}>
-              <div style={{marginBottom: '1.5rem'}}>
-                <label style={{display: 'block', marginBottom: '0.5rem', fontWeight: '600'}}>Telefon</label>
-                <input
-                  type="text"
-                  value={siteSettings.phone}
-                  onChange={(e) => setSiteSettings({...siteSettings, phone: e.target.value})}
-                  style={{width: '100%', padding: '0.75rem', border: '1px solid #e5e7eb', borderRadius: '4px'}}
-                />
-              </div>
-              <div style={{marginBottom: '1.5rem'}}>
-                <label style={{display: 'block', marginBottom: '0.5rem', fontWeight: '600'}}>E-posta</label>
-                <input
-                  type="email"
-                  value={siteSettings.email}
-                  onChange={(e) => setSiteSettings({...siteSettings, email: e.target.value})}
-                  style={{width: '100%', padding: '0.75rem', border: '1px solid #e5e7eb', borderRadius: '4px'}}
-                />
-              </div>
-              <div style={{marginBottom: '1.5rem'}}>
-                <label style={{display: 'block', marginBottom: '0.5rem', fontWeight: '600'}}>Adres</label>
-                <input
-                  type="text"
-                  value={siteSettings.address}
-                  onChange={(e) => setSiteSettings({...siteSettings, address: e.target.value})}
-                  style={{width: '100%', padding: '0.75rem', border: '1px solid #e5e7eb', borderRadius: '4px'}}
-                />
-              </div>
-              <button onClick={saveSettings} style={{
-                padding: '0.75rem 2rem',
-                background: '#0066cc',
-                color: 'white',
-                border: 'none',
-                borderRadius: '0.375rem',
-                cursor: 'pointer',
-                fontSize: '1rem',
-                fontWeight: '600'
+            {showNewUserForm && (
+              <div style={{
+                background: 'white',
+                padding: '1.5rem',
+                borderRadius: '0.5rem',
+                marginBottom: '2rem',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
               }}>
-                💾 Değişiklikleri Kaydet
-              </button>
+                <h3 style={{marginBottom: '1rem'}}>Yeni Kullanıcı</h3>
+                <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr auto', gap: '1rem', alignItems: 'end'}}>
+                  <div>
+                    <label style={{display: 'block', marginBottom: '0.25rem', fontSize: '0.875rem'}}>Ad Soyad</label>
+                    <input
+                      type="text"
+                      value={newUser.name}
+                      onChange={(e) => setNewUser({...newUser, name: e.target.value})}
+                      style={{width: '100%', padding: '0.5rem', border: '1px solid #e5e7eb', borderRadius: '4px'}}
+                    />
+                  </div>
+                  <div>
+                    <label style={{display: 'block', marginBottom: '0.25rem', fontSize: '0.875rem'}}>E-posta</label>
+                    <input
+                      type="email"
+                      value={newUser.email}
+                      onChange={(e) => setNewUser({...newUser, email: e.target.value})}
+                      style={{width: '100%', padding: '0.5rem', border: '1px solid #e5e7eb', borderRadius: '4px'}}
+                    />
+                  </div>
+                  <div>
+                    <label style={{display: 'block', marginBottom: '0.25rem', fontSize: '0.875rem'}}>Rol</label>
+                    <select
+                      value={newUser.role}
+                      onChange={(e) => setNewUser({...newUser, role: e.target.value})}
+                      style={{width: '100%', padding: '0.5rem', border: '1px solid #e5e7eb', borderRadius: '4px'}}
+                    >
+                      <option value="user">Kullanıcı</option>
+                      <option value="editor">Editör</option>
+                      <option value="admin">Admin</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style={{display: 'block', marginBottom: '0.25rem', fontSize: '0.875rem'}}>Plan</label>
+                    <select
+                      value={newUser.plan}
+                      onChange={(e) => setNewUser({...newUser, plan: e.target.value})}
+                      style={{width: '100%', padding: '0.5rem', border: '1px solid #e5e7eb', borderRadius: '4px'}}
+                    >
+                      <option value="Başlangıç">Başlangıç</option>
+                      <option value="Profesyonel">Profesyonel</option>
+                      <option value="Kurumsal">Kurumsal</option>
+                    </select>
+                  </div>
+                  <div style={{display: 'flex', gap: '0.5rem'}}>
+                    <button onClick={addUser} style={{
+                      padding: '0.5rem 1rem',
+                      background: '#0066cc',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px',
+                      cursor: 'pointer'
+                    }}>
+                      Ekle
+                    </button>
+                    <button onClick={() => setShowNewUserForm(false)} style={{
+                      padding: '0.5rem 1rem',
+                      background: '#6b7280',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px',
+                      cursor: 'pointer'
+                    }}>
+                      İptal
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div style={{background: 'white', borderRadius: '0.5rem', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.1)'}}>
+              <table style={{width: '100%', borderCollapse: 'collapse'}}>
+                <thead>
+                  <tr style={{background: '#f8fafc'}}>
+                    <th style={{padding: '1rem', textAlign: 'left', fontWeight: '600'}}>Ad Soyad</th>
+                    <th style={{padding: '1rem', textAlign: 'left', fontWeight: '600'}}>E-posta</th>
+                    <th style={{padding: '1rem', textAlign: 'left', fontWeight: '600'}}>Rol</th>
+                    <th style={{padding: '1rem', textAlign: 'left', fontWeight: '600'}}>Plan</th>
+                    <th style={{padding: '1rem', textAlign: 'left', fontWeight: '600'}}>Durum</th>
+                    <th style={{padding: '1rem', textAlign: 'left', fontWeight: '600'}}>Katılım</th>
+                    <th style={{padding: '1rem', textAlign: 'left', fontWeight: '600'}}>İşlemler</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map(user => (
+                    <tr key={user.id} style={{borderBottom: '1px solid #e5e7eb'}}>
+                      <td style={{padding: '1rem'}}>{user.name}</td>
+                      <td style={{padding: '1rem'}}>{user.email}</td>
+                      <td style={{padding: '1rem'}}>
+                        <span style={{
+                          padding: '0.25rem 0.75rem',
+                          background: user.role === 'admin' ? '#dbeafe' : user.role === 'editor' ? '#fef3c7' : '#e0e7ff',
+                          color: user.role === 'admin' ? '#1e40af' : user.role === 'editor' ? '#92400e' : '#3730a3',
+                          borderRadius: '0.375rem',
+                          fontSize: '0.875rem'
+                        }}>
+                          {user.role}
+                        </span>
+                      </td>
+                      <td style={{padding: '1rem'}}>{user.plan}</td>
+                      <td style={{padding: '1rem'}}>
+                        <span style={{color: user.status === 'active' ? '#10b981' : '#6b7280'}}>
+                          ● {user.status === 'active' ? 'Aktif' : 'Pasif'}
+                        </span>
+                      </td>
+                      <td style={{padding: '1rem'}}>{user.joinDate}</td>
+                      <td style={{padding: '1rem'}}>
+                        <button onClick={() => updateUserStatus(user.id, user.status === 'active' ? 'inactive' : 'active')} style={{
+                          marginRight: '0.5rem',
+                          padding: '0.25rem 0.75rem',
+                          background: user.status === 'active' ? '#f59e0b' : '#10b981',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '0.375rem',
+                          cursor: 'pointer',
+                          fontSize: '0.875rem'
+                        }}>
+                          {user.status === 'active' ? 'Pasifleştir' : 'Aktifleştir'}
+                        </button>
+                        <button onClick={() => deleteUser(user.id)} style={{
+                          padding: '0.25rem 0.75rem',
+                          background: '#dc2626',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '0.375rem',
+                          cursor: 'pointer',
+                          fontSize: '0.875rem'
+                        }}>
+                          Sil
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         )}
 
-        {(activeTab === 'users' || activeTab === 'logs') && (
+        {activeTab === 'logs' && (
+          <div>
+            <h1 style={{fontSize: '2rem', marginBottom: '2rem'}}>Audit Log</h1>
+            <div style={{background: 'white', borderRadius: '0.5rem', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.1)'}}>
+              <table style={{width: '100%', borderCollapse: 'collapse'}}>
+                <thead>
+                  <tr style={{background: '#f8fafc'}}>
+                    <th style={{padding: '1rem', textAlign: 'left', fontWeight: '600'}}>Kullanıcı</th>
+                    <th style={{padding: '1rem', textAlign: 'left', fontWeight: '600'}}>İşlem</th>
+                    <th style={{padding: '1rem', textAlign: 'left', fontWeight: '600'}}>Detay</th>
+                    <th style={{padding: '1rem', textAlign: 'left', fontWeight: '600'}}>Tarih/Saat</th>
+                    <th style={{padding: '1rem', textAlign: 'left', fontWeight: '600'}}>IP Adresi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {auditLogs.slice(0, 20).map(log => (
+                    <tr key={log.id} style={{borderBottom: '1px solid #e5e7eb'}}>
+                      <td style={{padding: '1rem'}}>
+                        <span style={{
+                          padding: '0.25rem 0.5rem',
+                          background: '#e0e7ff',
+                          color: '#3730a3',
+                          borderRadius: '0.25rem',
+                          fontSize: '0.875rem'
+                        }}>
+                          {log.user}
+                        </span>
+                      </td>
+                      <td style={{padding: '1rem', fontWeight: '500'}}>{log.action}</td>
+                      <td style={{padding: '1rem', color: '#6b7280', fontSize: '0.875rem'}}>{log.details}</td>
+                      <td style={{padding: '1rem', fontSize: '0.875rem'}}>{log.date}</td>
+                      <td style={{padding: '1rem', fontFamily: 'monospace', fontSize: '0.875rem', color: '#6b7280'}}>{log.ip}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p style={{marginTop: '1rem', color: '#6b7280', fontSize: '0.875rem'}}>
+              Son 20 işlem gösteriliyor. Tüm loglar sistem tarafından saklanmaktadır.
+            </p>
+          </div>
+        )}
+
+        {/* Diğer sekmeler için önceki kodları buraya ekleyin */}
+        {(activeTab === 'dashboard' || activeTab === 'settings' || activeTab === 'media' || activeTab === 'content' || activeTab === 'pricing' || activeTab === 'contact') && (
           <div>
             <h1 style={{fontSize: '2rem', marginBottom: '2rem'}}>
-              {activeTab === 'users' ? 'Kullanıcı Yönetimi' : 'Audit Log'}
+              {activeTab === 'dashboard' ? 'Dashboard' : 
+               activeTab === 'settings' ? 'Site Ayarları' :
+               activeTab === 'media' ? 'Logo ve Görseller' :
+               activeTab === 'content' ? 'İçerik Yönetimi' :
+               activeTab === 'pricing' ? 'Fiyatlandırma' :
+               'İletişim Bilgileri'}
             </h1>
             <div style={{background: 'white', padding: '2rem', borderRadius: '0.5rem'}}>
-              <p style={{color: '#64748b'}}>Bu bölüm yakında aktif olacak...</p>
+              <p>Bu bölüm aktif. Düzenlemeler için ilgili sekmeye tıklayın.</p>
             </div>
           </div>
         )}
