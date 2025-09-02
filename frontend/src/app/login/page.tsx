@@ -1,336 +1,181 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
-  const [isLogin, setIsLogin] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-  
-  const [loginData, setLoginData] = useState({ email: '', password: '' });
-  const [registerData, setRegisterData] = useState({ 
-    name: '', 
-    email: '', 
-    password: '', 
-    confirmPassword: '',
-    phone: '' 
+  const [userType, setUserType] = useState<'client' | 'lawyer'>('client');
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
   });
+  const [error, setError] = useState('');
+  const router = useRouter();
 
-  const Logo = () => (
-    <div style={{display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center'}}>
-      <svg width="35" height="35" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
-        <rect x="5" y="5" width="50" height="50" rx="8" fill="#f0f4f8" stroke="#cbd5e0" strokeWidth="2"/>
-        <path d="M30 15 L30 40" stroke="#0066cc" strokeWidth="2"/>
-        <path d="M20 20 L40 20" stroke="#0066cc" strokeWidth="2"/>
-        <circle cx="20" cy="20" r="3" fill="#0066cc"/>
-        <circle cx="40" cy="20" r="3" fill="#0066cc"/>
-        <path d="M38 35 L45 42" stroke="#0066cc" strokeWidth="3" strokeLinecap="round"/>
-      </svg>
-      <div>
-        <span style={{fontSize: '24px', fontWeight: 'bold', color: '#0066cc'}}>Avukat</span>
-        <span style={{fontSize: '24px', fontWeight: '300', color: '#64748b'}}>Ajanda</span>
-      </div>
-    </div>
-  );
-
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    setIsLoading(true);
 
-    if (!loginData.email || !loginData.password) {
-      setError('Email ve şifre gereklidir');
-      setIsLoading(false);
-      return;
+    // Avukat girişi
+    if (userType === 'lawyer') {
+      if (formData.email === 'avukat@demo.com' && formData.password === 'demo123') {
+        localStorage.setItem('lawyerAuth', JSON.stringify({
+          email: formData.email,
+          name: 'Demo Avukat',
+          role: 'lawyer',
+          token: 'lawyer_token_123'
+        }));
+        router.push('/dashboard');
+      } else {
+        setError('Geçersiz e-posta veya şifre!');
+      }
+    } 
+    // Müvekkil girişi
+    else {
+      if (formData.email === 'muvekkil@demo.com' && formData.password === 'demo123') {
+        localStorage.setItem('clientAuth', JSON.stringify({
+          email: formData.email,
+          name: 'Demo Müvekkil',
+          role: 'client',
+          token: 'client_token_123'
+        }));
+        router.push('/client-dashboard');
+      } else {
+        setError('Geçersiz e-posta veya şifre!');
+      }
     }
-
-    // Demo login
-    localStorage.setItem('token', 'demo-token-' + Date.now());
-    localStorage.setItem('user', JSON.stringify({ email: loginData.email }));
-    window.location.href = '/dashboard';
-  };
-
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setIsLoading(true);
-
-    if (registerData.password !== registerData.confirmPassword) {
-      setError('Şifreler eşleşmiyor');
-      setIsLoading(false);
-      return;
-    }
-
-    if (registerData.password.length < 8) {
-      setError('Şifre en az 8 karakter olmalıdır');
-      setIsLoading(false);
-      return;
-    }
-
-    // Demo register
-    localStorage.setItem('token', 'demo-token-' + Date.now());
-    localStorage.setItem('user', JSON.stringify({ 
-      name: registerData.name,
-      email: registerData.email 
-    }));
-    window.location.href = '/dashboard';
-  };
-
-  const inputStyle = {
-    width: '100%',
-    padding: '0.75rem',
-    border: '1px solid #e5e7eb',
-    borderRadius: '0.375rem',
-    fontSize: '1rem',
-    outline: 'none'
-  };
-
-  const labelStyle = {
-    display: 'block',
-    marginBottom: '0.375rem',
-    fontSize: '0.875rem',
-    fontWeight: '500',
-    color: '#374151'
   };
 
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: '1rem',
-      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
+      background: 'linear-gradient(135deg, #667eea, #764ba2)'
     }}>
       <div style={{
-        width: '100%',
-        maxWidth: '450px',
         background: 'white',
+        padding: '3rem',
         borderRadius: '1rem',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-        overflow: 'hidden'
+        boxShadow: '0 25px 50px rgba(0,0,0,0.25)',
+        width: '100%',
+        maxWidth: '450px'
       }}>
-        {/* Logo */}
-        <div style={{
-          padding: '2rem 2rem 1rem',
-          textAlign: 'center',
-          borderBottom: '1px solid #e5e7eb'
-        }}>
-          <a href="/" style={{textDecoration: 'none', display: 'inline-block'}}>
-            <Logo />
-          </a>
-        </div>
+        <h1 style={{textAlign: 'center', marginBottom: '2rem', color: '#1e293b'}}>
+          AvukatAjanda Giriş
+        </h1>
 
-        {/* Tab Switcher */}
-        <div style={{display: 'flex', borderBottom: '1px solid #e5e7eb'}}>
+        {/* Kullanıcı tipi seçimi */}
+        <div style={{display: 'flex', marginBottom: '2rem', background: '#f3f4f6', borderRadius: '0.5rem', padding: '0.25rem'}}>
           <button
-            onClick={() => {setIsLogin(true); setError('');}}
+            onClick={() => setUserType('client')}
             style={{
               flex: 1,
-              padding: '1rem',
-              background: 'transparent',
-              border: 'none',
-              borderBottom: isLogin ? '3px solid #667eea' : '3px solid transparent',
-              color: isLogin ? '#667eea' : '#6b7280',
-              fontWeight: isLogin ? '600' : '400',
-              fontSize: '0.95rem',
-              cursor: 'pointer'
-            }}
-          >
-            Giriş Yap
-          </button>
-          <button
-            onClick={() => {setIsLogin(false); setError('');}}
-            style={{
-              flex: 1,
-              padding: '1rem',
-              background: 'transparent',
-              border: 'none',
-              borderBottom: !isLogin ? '3px solid #667eea' : '3px solid transparent',
-              color: !isLogin ? '#667eea' : '#6b7280',
-              fontWeight: !isLogin ? '600' : '400',
-              fontSize: '0.95rem',
-              cursor: 'pointer'
-            }}
-          >
-            Kayıt Ol
-          </button>
-        </div>
-
-        {/* Form Content */}
-        <div style={{padding: '2rem'}}>
-          {error && (
-            <div style={{
               padding: '0.75rem',
-              marginBottom: '1rem',
-              background: '#fee2e2',
-              border: '1px solid #fecaca',
+              background: userType === 'client' ? 'white' : 'transparent',
+              border: 'none',
               borderRadius: '0.375rem',
-              color: '#991b1b',
-              fontSize: '0.875rem'
-            }}>
+              cursor: 'pointer',
+              fontWeight: userType === 'client' ? '600' : '400',
+              transition: 'all 0.2s'
+            }}
+          >
+            Müvekkil Girişi
+          </button>
+          <button
+            onClick={() => setUserType('lawyer')}
+            style={{
+              flex: 1,
+              padding: '0.75rem',
+              background: userType === 'lawyer' ? 'white' : 'transparent',
+              border: 'none',
+              borderRadius: '0.375rem',
+              cursor: 'pointer',
+              fontWeight: userType === 'lawyer' ? '600' : '400',
+              transition: 'all 0.2s'
+            }}
+          >
+            Avukat Girişi
+          </button>
+        </div>
+
+        <form onSubmit={handleLogin}>
+          <div style={{marginBottom: '1.5rem'}}>
+            <label style={{display: 'block', marginBottom: '0.5rem', fontWeight: '500'}}>
+              E-posta
+            </label>
+            <input
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData({...formData, email: e.target.value})}
+              placeholder={userType === 'lawyer' ? 'avukat@demo.com' : 'muvekkil@demo.com'}
+              required
+              style={{
+                width: '100%',
+                padding: '0.75rem',
+                border: '1px solid #e5e7eb',
+                borderRadius: '0.375rem',
+                fontSize: '1rem'
+              }}
+            />
+          </div>
+
+          <div style={{marginBottom: '1.5rem'}}>
+            <label style={{display: 'block', marginBottom: '0.5rem', fontWeight: '500'}}>
+              Şifre
+            </label>
+            <input
+              type="password"
+              value={formData.password}
+              onChange={(e) => setFormData({...formData, password: e.target.value})}
+              placeholder="demo123"
+              required
+              style={{
+                width: '100%',
+                padding: '0.75rem',
+                border: '1px solid #e5e7eb',
+                borderRadius: '0.375rem',
+                fontSize: '1rem'
+              }}
+            />
+          </div>
+
+          {error && (
+            <p style={{color: '#dc2626', marginBottom: '1rem', textAlign: 'center'}}>
               {error}
-            </div>
+            </p>
           )}
 
-          {isLogin ? (
-            <form onSubmit={handleLogin}>
-              <div style={{marginBottom: '1.25rem'}}>
-                <label htmlFor="email" style={labelStyle}>
-                  E-posta Adresi
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  required
-                  value={loginData.email}
-                  onChange={(e) => setLoginData({...loginData, email: e.target.value})}
-                  placeholder="ornek@avukatajanda.com"
-                  style={inputStyle}
-                />
-              </div>
+          <button
+            type="submit"
+            style={{
+              width: '100%',
+              padding: '0.875rem',
+              background: userType === 'lawyer' ? '#0066cc' : '#10b981',
+              color: 'white',
+              border: 'none',
+              borderRadius: '0.375rem',
+              fontSize: '1rem',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'background 0.2s'
+            }}
+          >
+            {userType === 'lawyer' ? 'Avukat Olarak Giriş Yap' : 'Müvekkil Olarak Giriş Yap'}
+          </button>
+        </form>
 
-              <div style={{marginBottom: '1.25rem'}}>
-                <label htmlFor="password" style={labelStyle}>
-                  Şifre
-                </label>
-                <input
-                  id="password"
-                  type="password"
-                  required
-                  value={loginData.password}
-                  onChange={(e) => setLoginData({...loginData, password: e.target.value})}
-                  placeholder="••••••••"
-                  style={inputStyle}
-                />
-              </div>
+        <div style={{marginTop: '2rem', textAlign: 'center', color: '#6b7280', fontSize: '0.875rem'}}>
+          <p>Demo Hesaplar:</p>
+          <p>Avukat: avukat@demo.com / demo123</p>
+          <p>Müvekkil: muvekkil@demo.com / demo123</p>
+        </div>
 
-              <div style={{marginBottom: '1.5rem', textAlign: 'right'}}>
-                <a href="#" style={{
-                  color: '#667eea',
-                  fontSize: '0.875rem',
-                  textDecoration: 'none'
-                }}>
-                  Şifremi Unuttum
-                </a>
-              </div>
-
-              <button
-                type="submit"
-                disabled={isLoading}
-                style={{
-                  width: '100%',
-                  padding: '0.875rem',
-                  background: isLoading ? '#9ca3af' : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '0.375rem',
-                  fontSize: '1rem',
-                  fontWeight: '600',
-                  cursor: isLoading ? 'not-allowed' : 'pointer'
-                }}
-              >
-                {isLoading ? 'Giriş yapılıyor...' : 'Giriş Yap'}
-              </button>
-            </form>
-          ) : (
-            <form onSubmit={handleRegister}>
-              <div style={{marginBottom: '1.25rem'}}>
-                <label htmlFor="name" style={labelStyle}>
-                  Ad Soyad
-                </label>
-                <input
-                  id="name"
-                  type="text"
-                  required
-                  value={registerData.name}
-                  onChange={(e) => setRegisterData({...registerData, name: e.target.value})}
-                  placeholder="Ahmet Yılmaz"
-                  style={inputStyle}
-                />
-              </div>
-
-              <div style={{marginBottom: '1.25rem'}}>
-                <label htmlFor="reg-email" style={labelStyle}>
-                  E-posta Adresi
-                </label>
-                <input
-                  id="reg-email"
-                  type="email"
-                  required
-                  value={registerData.email}
-                  onChange={(e) => setRegisterData({...registerData, email: e.target.value})}
-                  placeholder="ornek@avukatajanda.com"
-                  style={inputStyle}
-                />
-              </div>
-
-              <div style={{marginBottom: '1.25rem'}}>
-                <label htmlFor="phone" style={labelStyle}>
-                  Telefon (Opsiyonel)
-                </label>
-                <input
-                  id="phone"
-                  type="tel"
-                  value={registerData.phone}
-                  onChange={(e) => setRegisterData({...registerData, phone: e.target.value})}
-                  placeholder="0555 555 55 55"
-                  style={inputStyle}
-                />
-              </div>
-
-              <div style={{marginBottom: '1.25rem'}}>
-                <label htmlFor="reg-password" style={labelStyle}>
-                  Şifre (En az 8 karakter)
-                </label>
-                <input
-                  id="reg-password"
-                  type="password"
-                  required
-                  minLength={8}
-                  value={registerData.password}
-                  onChange={(e) => setRegisterData({...registerData, password: e.target.value})}
-                  placeholder="••••••••"
-                  style={inputStyle}
-                />
-              </div>
-
-              <div style={{marginBottom: '1.5rem'}}>
-                <label htmlFor="confirm-password" style={labelStyle}>
-                  Şifre Tekrar
-                </label>
-                <input
-                  id="confirm-password"
-                  type="password"
-                  required
-                  minLength={8}
-                  value={registerData.confirmPassword}
-                  onChange={(e) => setRegisterData({...registerData, confirmPassword: e.target.value})}
-                  placeholder="••••••••"
-                  style={inputStyle}
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={isLoading}
-                style={{
-                  width: '100%',
-                  padding: '0.875rem',
-                  background: isLoading ? '#9ca3af' : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '0.375rem',
-                  fontSize: '1rem',
-                  fontWeight: '600',
-                  cursor: isLoading ? 'not-allowed' : 'pointer'
-                }}
-              >
-                {isLoading ? 'Kayıt yapılıyor...' : '14 Gün Ücretsiz Başla'}
-              </button>
-            </form>
-          )}
+        <div style={{marginTop: '1.5rem', textAlign: 'center'}}>
+          <a href="/" style={{color: '#6b7280', textDecoration: 'none', fontSize: '0.875rem'}}>
+            ← Ana Sayfaya Dön
+          </a>
         </div>
       </div>
     </div>
