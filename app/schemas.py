@@ -1,9 +1,14 @@
 """
-Pydantic schemas for request/response validation
+Pydantic schemas for request/response validation (v1 compatible)
 """
-from pydantic import BaseModel, EmailStr, Field, ConfigDict
+from pydantic import BaseModel, EmailStr, Field
 from typing import Optional, List, Dict, Any
 from datetime import datetime
+
+# Base config for ORM models
+class ORMBase(BaseModel):
+    class Config:
+        orm_mode = True
 
 # User schemas
 class UserBase(BaseModel):
@@ -19,13 +24,11 @@ class UserLogin(BaseModel):
     email: EmailStr
     password: str
 
-class UserResponse(UserBase):
+class UserResponse(UserBase, ORMBase):
     id: int
     organization_id: Optional[int] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
-    
-    model_config = ConfigDict(from_attributes=True)
 
 class UserWithToken(UserResponse):
     access_token: str
@@ -41,12 +44,10 @@ class OrganizationBase(BaseModel):
 class OrganizationCreate(OrganizationBase):
     pass
 
-class OrganizationResponse(OrganizationBase):
+class OrganizationResponse(OrganizationBase, ORMBase):
     id: int
     created_at: datetime
     updated_at: Optional[datetime] = None
-    
-    model_config = ConfigDict(from_attributes=True)
 
 # Client schemas
 class ClientBase(BaseModel):
@@ -68,14 +69,12 @@ class ClientUpdate(BaseModel):
     address: Optional[str] = None
     notes: Optional[str] = None
 
-class ClientResponse(ClientBase):
+class ClientResponse(ClientBase, ORMBase):
     id: int
     owner_id: int
     organization_id: Optional[int] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
-    
-    model_config = ConfigDict(from_attributes=True)
 
 # Case schemas
 class CaseBase(BaseModel):
@@ -103,15 +102,13 @@ class CaseUpdate(BaseModel):
     opponent_lawyer: Optional[str] = None
     client_id: Optional[int] = None
 
-class CaseResponse(CaseBase):
+class CaseResponse(CaseBase, ORMBase):
     id: int
     owner_id: int
     organization_id: Optional[int] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
     client: Optional[ClientResponse] = None
-    
-    model_config = ConfigDict(from_attributes=True)
 
 # Event schemas
 class EventBase(BaseModel):
@@ -139,15 +136,13 @@ class EventUpdate(BaseModel):
     reminder_minutes: Optional[int] = None
     case_id: Optional[int] = None
 
-class EventResponse(EventBase):
+class EventResponse(EventBase, ORMBase):
     id: int
     owner_id: int
     organization_id: Optional[int] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
     case: Optional[CaseResponse] = None
-    
-    model_config = ConfigDict(from_attributes=True)
 
 # Stats schemas
 class StatsResponse(BaseModel):
@@ -180,7 +175,7 @@ class ConsentCreate(BaseModel):
     ip_address: Optional[str] = None
     user_agent: Optional[str] = None
 
-class ConsentResponse(BaseModel):
+class ConsentResponse(ORMBase):
     id: int
     user_id: int
     kvkk: bool
@@ -189,5 +184,3 @@ class ConsentResponse(BaseModel):
     consent_date: datetime
     ip_address: Optional[str] = None
     user_agent: Optional[str] = None
-    
-    model_config = ConfigDict(from_attributes=True)

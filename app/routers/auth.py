@@ -71,7 +71,7 @@ async def register(
     )
     
     return {
-        **schemas.UserResponse.model_validate(db_user).model_dump(),
+        **schemas.UserResponse.from_orm(db_user).dict(),
         "access_token": access_token,
         "token_type": "bearer"
     }
