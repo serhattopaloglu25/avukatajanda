@@ -1,15 +1,35 @@
 #!/bin/bash
 
-# Render Runtime Script
-echo "Detecting runtime environment..."
+echo "🚀 Backend Başlatılıyor..."
+echo "=========================="
 
-# Check if Python is available
-if command -v python3 &> /dev/null; then
-    echo "Python detected, starting FastAPI app..."
-    pip install -r requirements.txt
-    uvicorn app.main:app --host 0.0.0.0 --port $PORT
-else
-    echo "Python not available, falling back to Node.js..."
-    npm install
-    npm start
+cd /Users/bos/Desktop/AvukatAjanda_Ana_Klasor/avukat-ajanda-backend-py
+
+# Python versiyonunu kontrol et
+echo "Python versiyonu:"
+python3 --version
+
+# Virtual environment oluştur (Python 3.11 veya 3.12 kullan)
+if [ ! -d "venv" ]; then
+    echo "📦 Virtual environment oluşturuluyor..."
+    python3 -m venv venv
 fi
+
+# Activate virtual environment
+source venv/bin/activate
+
+# Upgrade pip
+pip install --upgrade pip
+
+# Install requirements
+echo "📚 Bağımlılıklar yükleniyor..."
+pip install -r requirements.txt
+
+# Create database file if not exists
+touch avukat.db
+
+# Start backend
+echo "✅ Backend başlatılıyor: http://localhost:8000"
+echo "📖 API Docs: http://localhost:8000/docs"
+echo ""
+python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000

@@ -1,40 +1,28 @@
 """
 Database configuration and session management
 """
-import os
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from dotenv import load_dotenv
+import os
 
-load_dotenv()
+# SQLite database URL
+SQLALCHEMY_DATABASE_URL = "sqlite:///./avukat.db"
 
-# Database URL from environment
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:pass@localhost/avukatajanda")
-
-# SQLAlchemy setup - SQLite için özel ayarlar
-if DATABASE_URL.startswith("sqlite"):
-    # SQLite için
-    engine = create_engine(
-        DATABASE_URL,
-        connect_args={"check_same_thread": False}
-    )
-else:
-    # PostgreSQL için
-    engine = create_engine(
-        DATABASE_URL,
-        pool_pre_ping=True,
-        pool_size=10,
-        max_overflow=20
-    )
+# Create engine with SQLite
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL, 
+    connect_args={"check_same_thread": False}  # Needed for SQLite
+)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
-# Dependency to get DB session
 def get_db():
-    """Get database session"""
+    """
+    Database dependency for FastAPI
+    """
     db = SessionLocal()
     try:
         yield db
