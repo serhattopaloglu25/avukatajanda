@@ -29,3 +29,31 @@ elif os.path.exists('app/__init__.py'):
 else:
     print("Error: No valid entry point found!")
     sys.exit(1)
+
+# Client endpoints
+@app.get("/api/clients")
+async def get_clients():
+    return []
+
+@app.post("/api/clients")
+async def create_client(client: dict):
+    return {"id": 1, **client}
+
+# Case endpoints  
+@app.get("/api/cases")
+async def get_cases():
+    return []
+
+@app.post("/api/cases")
+async def create_case(case: dict):
+    return {"id": 1, **case}
+
+# Dashboard
+@app.get("/api/dashboard/stats")
+async def dashboard_stats():
+    return {
+        "total_clients": 0,
+        "total_cases": 0,
+        "active_cases": 0,
+        "upcoming_events": 0
+    }
