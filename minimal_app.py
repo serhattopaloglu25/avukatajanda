@@ -108,7 +108,12 @@ async def stats():
 
 if __name__ == "__main__":
     import uvicorn
+    import os
+    
+    port = int(os.environ.get("PORT", 8000))
+    
     print("🚀 Starting Minimal API Server")
-    print("📊 Health: http://localhost:8000/health")
-    print("📚 Docs: http://localhost:8000/docs")
-    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
+    print(f"📊 Health: http://0.0.0.0:{port}/health")
+    print(f"📚 Docs: http://0.0.0.0:{port}/docs")
+    
+    uvicorn.run(app, host="0.0.0.0", port=port)
